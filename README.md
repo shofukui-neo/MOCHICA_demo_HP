@@ -38,7 +38,9 @@ npm run build
 | Framework preset | Astro |
 | Build command | `npm run build` |
 | Build output directory | `dist` |
-| Environment variable | `NODE_VERSION` = `20.11.0` |
+| Environment variable | `NODE_VERSION` = `22.12.0` |
+
+> **Note:** Astro 7.x requires Node.js >= 22.12.0. Cloudflare Pages の環境変数 `NODE_VERSION` も `22.12.0` に設定してください。
 
 ## デプロイ
 
