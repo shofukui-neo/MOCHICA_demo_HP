@@ -1,0 +1,120 @@
+---
+const categories = [
+  {
+    id: 'work',
+    label: '仕事・配属',
+    questions: [
+      {
+        q: '配属はどのように決まりますか？',
+        a: '入社後のオリエンテーション期間中に、本人の希望・適性・事業状況を総合的に判断して決定します。配属前に各部署の説明会も実施するため、納得感を持って選べます。',
+        open: true,
+      },
+      { q: '配属後の異動はありますか？', a: '原則として配属後1〜2年は同一部署での勤務を基本としています。キャリアプランに応じた異動制度も整備しています。' },
+      { q: '未経験でも大丈夫ですか？', a: 'はい。新卒採用の大半が未経験からスタートしています。入社後3ヶ月間の研修プログラムで基礎から学べます。' },
+      { q: '残業はどのくらいありますか？', a: '部署・時期により異なりますが、月平均20〜30時間程度です。残業時間の上限管理も徹底しています。' },
+      { q: 'リモートワークは可能ですか？', a: '部署により異なりますが、週1〜2日のリモートワークを推奨しているチームもあります。' },
+    ],
+  },
+  {
+    id: 'benefits',
+    label: '働き方・待遇',
+    questions: [
+      { q: '初任給はいくらですか？', a: '（要ヒアリング）月給25万円〜（固定残業代含む）を予定しています。' },
+      { q: '賞与はありますか？', a: '年2回（6月・12月）の賞与制度があります。業績連動型のインセンティブも設定しています。' },
+      { q: '有給休暇は取りやすいですか？', a: '年間10日以上の取得を推奨しており、計画的な取得を促進する制度も整備しています。' },
+      { q: '福利厚生はどんなものがありますか？', a: '社会保険完備、交通費全額支給、書籍購入補助、資格取得支援、社員旅行など。' },
+      { q: '育児・介護と両立できますか？', a: '育児休業・短時間勤務・介護休業など、ライフステージに応じた制度を整備しています。' },
+    ],
+  },
+  {
+    id: 'career',
+    label: '成長・キャリア',
+    questions: [
+      { q: '研修制度はありますか？', a: '入社時研修に加え、階層別研修・外部セミナー参加支援・OJTなど多様な学習機会を提供しています。' },
+      { q: 'キャリアパスはどうなっていますか？', a: 'マネジメントコースとスペシャリストコースの2軸制。入社3年目以降に選択できます。' },
+      { q: '評価制度は？', a: '半期ごとの目標設定と1on1面談を通じた評価。成果だけでなくプロセスも重視します。' },
+      { q: '転勤はありますか？', a: '基本的に転勤はありません。東京本社勤務が中心です。' },
+      { q: '副業は可能ですか？', a: '事前申請・承認制で、本業に支障のない範囲で認めています。' },
+    ],
+  },
+  {
+    id: 'selection',
+    label: '選考',
+    questions: [
+      { q: '選考フローを教えてください', a: 'エントリー → 説明会 → 1次面接 → 2次面接 → 最終面接 → 内定の流れです。' },
+      { q: '説明会は必須ですか？', a: 'オンライン・対面どちらも選択可能です。参加は任意ですが、参加いただくと選考で加点されます。' },
+      { q: '面接は何回ありますか？', a: '通常2〜3回です。オンライン面接も可能です。' },
+      { q: 'カジュアル面談はありますか？', a: 'はい。選考前のカジュアル面談も随時受け付けています。' },
+    ],
+  },
+];
+---
+
+<section class="py-16 md:py-24">
+  <div class="mx-auto max-w-6xl px-4 md:px-6">
+    <p class="section-label mb-2">02 — FAQ</p>
+    <h2 class="mb-10 text-2xl font-bold text-gray-900 md:text-3xl">聞きにくいことも、全部答えます</h2>
+
+    <div class="mb-8 flex flex-wrap gap-2">
+      {categories.map((cat, i) => (
+        <button
+          type="button"
+          data-tab={cat.id}
+          class:list={[
+            'rounded-full px-4 py-2 text-sm font-medium transition',
+            i === 0 ? 'bg-brand-blue text-white' : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-blue',
+          ]}
+        >
+          {cat.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      {categories.map((cat, catIndex) => (
+        <div data-panel={cat.id} class:list={[catIndex > 1 && 'hidden md:block']}>
+          <h3 class="mb-4 text-sm font-bold text-brand-blue">[{String.fromCharCode(65 + catIndex)}] {cat.label}について</h3>
+          <div class="space-y-2">
+            {cat.questions.map((item, qIndex) => (
+              <details class="card group" open={item.open}>
+                <summary class="flex cursor-pointer items-center justify-between p-4 font-medium text-gray-900 marker:content-none">
+                  {item.q}
+                  <span class="ml-2 shrink-0 text-brand-blue transition group-open:rotate-180">▼</span>
+                </summary>
+                <div class="border-t border-gray-100 px-4 pb-4 pt-2 text-sm text-gray-600">
+                  {item.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabs = document.querySelectorAll('[data-tab]');
+  const panels = document.querySelectorAll('[data-panel]');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.getAttribute('data-tab');
+
+      tabs.forEach((t) => {
+        t.classList.remove('bg-brand-blue', 'text-white');
+        t.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+      });
+      tab.classList.add('bg-brand-blue', 'text-white');
+      tab.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+
+      panels.forEach((panel) => {
+        if (panel.getAttribute('data-panel') === target) {
+          panel.classList.remove('hidden');
+        } else if (window.innerWidth < 768) {
+          panel.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>

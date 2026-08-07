@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import BusinessSection from '../components/BusinessSection.astro';
+import JobRoleCard from '../components/JobRoleCard.astro';
+import ComparisonTable from '../components/ComparisonTable.astro';
+import FooterCTA from '../components/FooterCTA.astro';
+---
+
+<Layout title="仕事・配属 | NEO CAREER 2027新卒採用">
+  <Header activeNav="jobs" />
+  <Hero variant="default" />
+  <BusinessSection />
+
+  <section class="py-16 md:py-24">
+    <div class="mx-auto max-w-6xl px-4 md:px-6">
+      <p class="section-label mb-2">02 — JOB ROLES</p>
+      <h2 class="mb-10 text-2xl font-bold text-gray-900 md:text-3xl">4つの職種、4つの未来</h2>
+
+      <div class="space-y-8">
+        <JobRoleCard
+          number="01"
+          title="法人営業"
+          subtitle="B2B Sales — 企業の課題を解決する"
+          color="green"
+        />
+        <JobRoleCard
+          number="02"
+          title="キャリアアドバイザー"
+          subtitle="Career Advisor — 人の人生に寄り添う"
+          color="purple"
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          <JobRoleCard
+            number="03"
+            title="企画/マーケティング"
+            subtitle="Planning & Marketing"
+            color="pink"
+            compact
+          />
+          <JobRoleCard
+            number="04"
+            title="新規事業/HR Tech"
+            subtitle="New Business & HR Tech"
+            color="orange"
+            compact
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ComparisonTable />
+
+  <FooterCTA
+    headline="気になる職種は見つかりましたか？"
+    linkPrimary={{ label: '先輩社員の話を読む', href: '/people' }}
+    linkSecondary={{ label: 'よくある質問を見る', href: '/faq' }}
+  />
+</Layout>

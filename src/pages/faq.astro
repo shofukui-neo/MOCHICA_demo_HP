@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import BusinessSection from '../components/BusinessSection.astro';
+import FAQSection from '../components/FAQSection.astro';
+import RecruitmentTable from '../components/RecruitmentTable.astro';
+import SelectionFlow from '../components/SelectionFlow.astro';
+import FooterCTA from '../components/FooterCTA.astro';
+---
+
+<Layout title="よくある質問 | NEO CAREER 2027新卒採用">
+  <Header activeNav="faq" />
+  <Hero variant="faq" />
+  <BusinessSection />
+  <FAQSection />
+  <RecruitmentTable />
+  <SelectionFlow />
+
+  <FooterCTA
+    headline="不安が消えたら、次はエントリーです"
+    linkPrimary={{ label: '仕事内容を見る', href: '/' }}
+    linkSecondary={{ label: '先輩社員の話を読む', href: '/people' }}
+  />
+</Layout>

@@ -1,0 +1,33 @@
+---
+const steps = [
+  { label: 'エントリー', sub: '随時', color: 'bg-brand-blue-dark text-white' },
+  { label: '説明会', sub: 'オンライン', color: 'bg-brand-blue text-white' },
+  { label: '面接', sub: '複数回', color: 'bg-brand-blue/80 text-white' },
+  { label: '内定', sub: '承諾', color: 'bg-brand-green text-white' },
+];
+---
+
+<section class="py-16 md:py-24">
+  <div class="mx-auto max-w-4xl px-4 md:px-6">
+    <h2 class="mb-10 text-center text-2xl font-bold text-gray-900">選考フロー</h2>
+    <div class="flex flex-col gap-2 md:flex-row md:items-stretch">
+      {steps.map((step, i) => (
+        <div class="flex flex-1 items-center gap-2">
+          <div class:list={['flex flex-1 flex-col items-center justify-center rounded-xl px-4 py-6 text-center', step.color]}>
+            <p class="text-lg font-bold">{step.label}</p>
+            <p class="text-sm opacity-90">{step.sub}</p>
+          </div>
+          {i < steps.length - 1 && (
+            <span class="hidden text-2xl text-gray-400 md:block">→</span>
+          )}
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 rounded-2xl border border-gray-200 bg-white p-8 text-center">
+      <p class="mb-2 text-sm font-semibold text-gray-500">まだ不安が残る方へ</p>
+      <p class="mb-6 text-lg font-bold text-gray-900">カジュアル面談も受け付けています</p>
+      <a href="#entry" class="btn-secondary">カジュアル面談を申し込む</a>
+    </div>
+  </div>
+</section>

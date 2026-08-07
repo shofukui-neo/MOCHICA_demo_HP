@@ -1,0 +1,63 @@
+---
+interface Props {
+  name: string;
+  initials: string;
+  department: string;
+  year: string;
+  headline: string;
+  color: 'pink' | 'purple' | 'green' | 'blue';
+  timeline: { year: string; label: string }[];
+  sections: { title: string; content: string }[];
+  episode: string;
+  featured?: boolean;
+}
+
+const { name, initials, department, year, headline, color, timeline, sections, episode, featured = false } = Astro.props;
+
+const colorStyles: Record<string, { bg: string; light: string; text: string }> = {
+  pink: { bg: 'bg-brand-pink', light: 'bg-brand-pink-light', text: 'text-brand-pink' },
+  purple: { bg: 'bg-brand-purple', light: 'bg-brand-purple-light', text: 'text-brand-purple' },
+  green: { bg: 'bg-brand-green', light: 'bg-brand-green-light', text: 'text-brand-green' },
+  blue: { bg: 'bg-brand-blue', light: 'bg-brand-blue-light', text: 'text-brand-blue' },
+};
+
+const style = colorStyles[color];
+---
+
+<article class:list={['card p-6 md:p-8', featured && 'md:col-span-2']}>
+  <div class="flex flex-col gap-6 md:flex-row">
+    <div class="flex shrink-0 flex-col items-center md:items-start">
+      <div class:list={['flex h-24 w-24 items-center justify-center rounded-full text-2xl font-bold text-white', style.bg]}>
+        {initials}
+      </div>
+      <p class="mt-3 text-sm font-semibold text-gray-900">{name}</p>
+      <p class="text-xs text-gray-500">{department} / {year}入社</p>
+    </div>
+
+    <div class="flex-1">
+      <h3 class="mb-4 text-xl font-bold text-gray-900 md:text-2xl">"{headline}"</h3>
+
+      <div class="mb-6 flex flex-wrap gap-2">
+        {timeline.map((item) => (
+          <span class:list={['rounded-full px-3 py-1 text-xs font-medium', style.light, style.text]}>
+            {item.year} {item.label}
+          </span>
+        ))}
+      </div>
+
+      <div class="space-y-4">
+        {sections.map((section) => (
+          <div>
+            <h4 class="mb-1 text-sm font-semibold text-gray-500">{section.title}</h4>
+            <p class="text-sm text-gray-700">{section.content}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class:list={['mt-6 rounded-xl p-4', style.light]}>
+        <p class:list={['mb-1 text-xs font-semibold', style.text]}>超成長を体現したエピソード</p>
+        <p class="text-sm text-gray-700">{episode}</p>
+      </div>
+    </div>
+  </div>
+</article>

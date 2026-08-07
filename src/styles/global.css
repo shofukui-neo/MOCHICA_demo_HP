@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #2563eb;
+  --color-brand-blue-dark: #1d4ed8;
+  --color-brand-blue-light: #dbeafe;
+  --color-brand-green: #16a34a;
+  --color-brand-green-light: #dcfce7;
+  --color-brand-purple: #7c3aed;
+  --color-brand-purple-light: #ede9fe;
+  --color-brand-pink: #db2777;
+  --color-brand-pink-light: #fce7f3;
+  --color-brand-orange: #ea580c;
+  --color-brand-orange-light: #ffedd5;
+  --color-brand-yellow: #f59e0b;
+  --color-brand-yellow-light: #fef3c7;
+  --color-surface: #fafaf8;
+  --color-surface-muted: #f5f5f3;
+  --font-sans: "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: #1f2937;
+  line-height: 1.75;
+}
+
+.section-label {
+  @apply text-xs font-semibold tracking-widest text-gray-400 uppercase;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-full bg-brand-blue px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-blue-dark;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-8 py-3 text-sm font-semibold text-gray-700 transition hover:border-brand-blue hover:text-brand-blue;
+}
+
+.card {
+  @apply rounded-2xl border border-gray-200 bg-white shadow-sm;
+}

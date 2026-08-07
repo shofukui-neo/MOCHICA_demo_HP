@@ -1,0 +1,26 @@
+---
+interface Props {
+  name: string;
+  initials: string;
+  headline: string;
+  year: string;
+  color: 'pink' | 'purple' | 'green' | 'blue';
+}
+
+const { name, initials, headline, year, color } = Astro.props;
+
+const colorStyles: Record<string, string> = {
+  pink: 'bg-brand-pink',
+  purple: 'bg-brand-purple',
+  green: 'bg-brand-green',
+  blue: 'bg-brand-blue',
+};
+---
+
+<div class="card p-4 text-center">
+  <div class:list={['mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full text-sm font-bold text-white', colorStyles[color]]}>
+    {initials}
+  </div>
+  <p class="mb-1 text-sm font-bold text-gray-900">{headline}</p>
+  <p class="text-xs text-gray-500">{name} / {year}入社</p>
+</div>
