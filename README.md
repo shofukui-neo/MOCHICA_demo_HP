@@ -62,12 +62,22 @@ npm run preview  # ビルド結果を確認
 
 | 項目 | 値 |
 |------|-----|
-| Framework preset | Astro |
 | Build command | `npm run build` |
-| Build output directory | `dist` |
+| Deploy command | `npx wrangler deploy` |
 | 環境変数 | `NODE_VERSION` = `22.12.0` |
 
 `main` ブランチへの push で自動ビルド・デプロイされます。
+
+デプロイ設定は `wrangler.jsonc` に定義しています（静的アセット配信のみの Worker）。
+
+> **このファイルを消さないこと。** wrangler は設定ファイルが無いと未設定プロジェクトとみなし、
+> 自動セットアップ（`astro add cloudflare`）を実行して SSR アダプターを勝手に追加します。
+> その結果ビルド時に Workers ランタイム（miniflare）が起動し、
+> 自動生成される `compatibility_date` が同梱 workerd の対応日を追い越してビルドが失敗します。
+> 本サイトは完全な静的出力なのでアダプターは不要です。
+
+`compatibility_date` は**未来日にしない**こと。ビルド環境の workerd が対応していない日付を指定すると
+`ERR_RUNTIME_FAILURE` で失敗します。
 
 ## 注意
 

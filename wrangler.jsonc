@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mochica-demo-hp",
+  // 静的サイトのため Worker スクリプト(main)もアダプターも不要。
+  // このファイルが無いと wrangler deploy が自動セットアップ(astro add cloudflare)を
+  // 実行し、不要な SSR アダプターが入ってビルドが壊れる。
+  "compatibility_date": "2026-08-08",
+  "assets": {
+    "directory": "./dist"
+  }
+}
