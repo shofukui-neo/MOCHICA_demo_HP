@@ -1,0 +1,65 @@
+---
+import { SITE, IMAGES } from '../data/site';
+
+interface Props {
+  activeNav: 'jobs' | 'people' | 'faq';
+}
+const { activeNav } = Astro.props;
+
+const nav = [
+  { id: 'jobs', label: '仕事を知る', href: '/' },
+  { id: 'people', label: '人を知る', href: '/people' },
+  { id: 'faq', label: '選考を知る', href: '/faq' },
+] as const;
+---
+
+<footer class="bg-brand-blue-deep py-14 text-white/70">
+  <div class="shell">
+    <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <img src={IMAGES.icon} alt="" width="32" height="32" class="h-8 w-8 rounded-lg" loading="lazy" />
+          <span class="text-[15px] font-black text-white">{SITE.name}</span>
+        </div>
+        <p class="mt-4 text-[13px] font-bold text-white/90">{SITE.purpose}</p>
+        <p class="mt-3 text-xs leading-relaxed">
+          {SITE.company}<br />
+          〒160-0023 東京都新宿区西新宿1-22-2 新宿サンエービル
+        </p>
+      </div>
+
+      <nav class="flex flex-col gap-3" aria-label="フッターナビゲーション">
+        <p class="text-[10px] font-black tracking-[0.25em] text-white/40">SITE MAP</p>
+        {
+          nav.map((n) => (
+            <a
+              href={n.href}
+              aria-current={activeNav === n.id ? 'page' : undefined}
+              class:list={[
+                'text-sm transition hover:text-white',
+                activeNav === n.id ? 'font-bold text-white' : '',
+              ]}
+            >
+              {n.label}
+            </a>
+          ))
+        }
+        <a
+          href="https://www.neo-career.co.jp/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm transition hover:text-white"
+        >
+          コーポレートサイト ↗
+        </a>
+      </nav>
+    </div>
+
+    <div class="mt-12 border-t border-white/15 pt-6">
+      <p class="text-[11px] text-white/45">
+        本サイトは MOCHICA 採用LPデモです。掲載内容の一部は公開情報および想定サンプルを含みます。
+      </p>
+      <p class="mt-2 text-[11px] text-white/45">© neo career</p>
+    </div>
+  </div>
+</footer>

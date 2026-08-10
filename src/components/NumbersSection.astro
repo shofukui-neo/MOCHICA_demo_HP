@@ -1,0 +1,35 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { FACTS, IMAGES } from '../data/site';
+---
+
+<section class="bg-surface py-20 md:py-28">
+  <div class="shell grid items-center gap-12 lg:grid-cols-[1fr_minmax(0,440px)]">
+    <div>
+      <SectionHeading
+        label="02 — Numbers"
+        title="数字で見るネオキャリア"
+        lead="2000年の創業から25年。人材ビジネスを軸に、事業領域も拠点も広げてきました。"
+      />
+
+      <dl class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4 lg:grid-cols-2">
+        {
+          FACTS.map((f) => (
+            <div class="border-l-2 border-brand-blue pl-4">
+              <dd class="flex items-baseline gap-1">
+                <span class="text-3xl font-black text-ink md:text-4xl">{f.value}</span>
+                <span class="text-sm font-bold text-brand-blue">{f.unit}</span>
+              </dd>
+              <dt class="mt-1 text-xs font-bold text-gray-700">{f.label}</dt>
+              <p class="text-[11px] text-gray-400">{f.note}</p>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+
+    <div class="media-frame aspect-[4/3] shadow-xl lg:aspect-[3/4]">
+      <img src={IMAGES.office} alt="ネオキャリアのオフィス" loading="lazy" decoding="async" />
+    </div>
+  </div>
+</section>

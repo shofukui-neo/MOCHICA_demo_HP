@@ -1,126 +1,85 @@
 ---
 interface Props {
-  number: string;
-  title: string;
-  subtitle: string;
-  color: 'green' | 'purple' | 'pink' | 'orange';
-  compact?: boolean;
+  role: {
+    no: string;
+    title: string;
+    en: string;
+    accent: string;
+    image: string;
+    catch: string;
+    body: string;
+    day: readonly { time: string; text: string }[];
+    fit: readonly string[];
+  };
+  flip?: boolean;
 }
+const { role, flip = false } = Astro.props;
 
-const { number, title, subtitle, color, compact = false } = Astro.props;
-
-const colorStyles: Record<string, { header: string; accent: string; light: string }> = {
-  green: { header: 'bg-brand-green', accent: 'text-brand-green', light: 'bg-brand-green-light' },
-  purple: { header: 'bg-brand-purple', accent: 'text-brand-purple', light: 'bg-brand-purple-light' },
-  pink: { header: 'bg-brand-pink', accent: 'text-brand-pink', light: 'bg-brand-pink-light' },
-  orange: { header: 'bg-brand-orange', accent: 'text-brand-orange', light: 'bg-brand-orange-light' },
+const accentText: Record<string, string> = {
+  blue: 'text-brand-blue',
+  purple: 'text-brand-purple',
+  pink: 'text-brand-pink',
+  orange: 'text-brand-orange',
 };
-
-const style = colorStyles[color];
-
-const steps = ['ヒアリング', '提案', '課題解決'];
-const timeline = [
-  { time: '9:00', label: '出社・メールチェック' },
-  { time: '10:00', label: 'クライアント訪問' },
-  { time: '13:00', label: 'ランチ' },
-  { time: '14:00', label: '提案資料作成' },
-  { time: '17:00', label: 'チームMTG' },
-  { time: '19:00', label: '退社' },
-];
-
-const skills = ['提案力', '交渉力', '課題解決力'];
-const suitedFor = ['人と話すことが好き', '成果を数字で実感したい', 'チームで動くのが得意'];
-const hardships = ['数字目標へのプレッシャー', '不確実な状況への対応', '長時間の商談'];
+const accentBg: Record<string, string> = {
+  blue: 'bg-brand-blue',
+  purple: 'bg-brand-purple',
+  pink: 'bg-brand-pink',
+  orange: 'bg-brand-orange',
+};
+const accentSoft: Record<string, string> = {
+  blue: 'bg-brand-blue-light text-brand-blue',
+  purple: 'bg-brand-purple-light text-brand-purple',
+  pink: 'bg-brand-pink-light text-brand-pink',
+  orange: 'bg-brand-orange-light text-brand-orange',
+};
 ---
 
-<article class="card overflow-hidden">
-  <div class:list={['flex items-center gap-4 px-6 py-4 text-white', style.header]}>
-    <span class="text-2xl font-bold opacity-80">{number}</span>
-    <div>
-      <h3 class="text-xl font-bold">{title}</h3>
-      <p class="text-sm opacity-90">{subtitle}</p>
+<article class="card-lift overflow-hidden">
+  <div class="grid md:grid-cols-2">
+    <div class:list={['media-frame aspect-[4/3] rounded-none md:aspect-auto md:min-h-[380px]', flip && 'md:order-2']}>
+      <img src={role.image} alt={`${role.title}の仕事風景`} loading="lazy" decoding="async" />
+      <span
+        class={`absolute left-5 top-5 rounded-full px-3 py-1 text-[11px] font-black tracking-widest text-white ${accentBg[role.accent]}`}
+      >
+        {role.no}
+      </span>
     </div>
-    <svg viewBox="0 0 48 48" class="ml-auto h-12 w-12 opacity-80" aria-hidden="true">
-      <circle cx="24" cy="16" r="10" fill="white" opacity="0.9"/>
-      <ellipse cx="24" cy="40" rx="16" ry="12" fill="white" opacity="0.9"/>
-    </svg>
-  </div>
 
-  {!compact && (
-    <div class="p-6 space-y-6">
-      <div>
-        <p class="mb-3 text-xs font-semibold text-gray-500">仕事の流れ</p>
-        <div class="flex items-center gap-2">
-          {steps.map((step, i) => (
-            <>
-              <div class:list={['rounded-lg px-4 py-2 text-sm font-medium', style.light, style.accent]}>
-                {step}
-              </div>
-              {i < steps.length - 1 && <span class="text-gray-400">→</span>}
-            </>
-          ))}
-        </div>
-      </div>
+    <div class:list={['flex flex-col p-7 md:p-10', flip && 'md:order-1']}>
+      <p class={`text-[10px] font-bold tracking-[0.22em] ${accentText[role.accent]}`}>{role.en}</p>
+      <h3 class="mt-2 text-xl font-bold text-ink md:text-2xl">{role.title}</h3>
+      <p class={`mt-3 text-sm font-bold ${accentText[role.accent]}`}>{role.catch}</p>
+      <p class="mt-4 text-sm leading-relaxed text-gray-600">{role.body}</p>
 
-      <div>
-        <p class="mb-3 text-xs font-semibold text-gray-500">1日の流れ</p>
-        <div class="flex flex-wrap gap-2">
-          {timeline.map((item) => (
-            <div class="rounded-lg border border-gray-200 px-3 py-2 text-xs">
-              <span class="font-bold text-gray-900">{item.time}</span>
-              <span class="ml-1 text-gray-600">{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <p class="mb-3 text-xs font-semibold text-gray-500">身につくスキル</p>
-        <div class="flex flex-wrap gap-2">
-          {skills.map((skill) => (
-            <span class:list={['rounded-full px-4 py-1 text-sm font-medium', style.light, style.accent]}>
-              {skill}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div class="grid gap-4 md:grid-cols-2">
-        <div>
-          <p class="mb-2 text-xs font-semibold text-gray-500">向いている人</p>
-          <ul class="space-y-1 text-sm text-gray-700">
-            {suitedFor.map((item) => (
-              <li class="flex items-start gap-2">
-                <span class:list={['mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', style.header]} />
-                {item}
+      <div class="mt-7 rounded-xl bg-surface-muted p-5">
+        <p class="text-[10px] font-bold tracking-[0.2em] text-gray-500">A DAY IN THE LIFE</p>
+        <ul class="mt-3 space-y-2.5">
+          {
+            role.day.map((d) => (
+              <li class="flex gap-3 text-sm">
+                <span class={`shrink-0 font-mono text-xs font-bold ${accentText[role.accent]}`}>
+                  {d.time}
+                </span>
+                <span class="text-gray-700">{d.text}</span>
               </li>
-            ))}
-          </ul>
-        </div>
-        <div class="rounded-xl bg-brand-orange-light/60 p-4">
-          <p class="mb-2 text-xs font-semibold text-brand-orange">大変なところ</p>
-          <ul class="space-y-1 text-sm text-gray-700">
-            {hardships.map((item) => (
-              <li>・{item}</li>
-            ))}
-          </ul>
-        </div>
+            ))
+          }
+        </ul>
       </div>
-    </div>
-  )}
 
-  {compact && (
-    <div class="p-6">
-      <p class="text-sm text-gray-600">
-        企画・マーケティングや新規事業・HR Techなど、会社の成長を牽引するポジション。データ分析や企画立案、新サービスの立ち上げに携わります。
-      </p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        {['企画力', '分析力', '推進力'].map((skill) => (
-          <span class:list={['rounded-full px-3 py-1 text-xs font-medium', style.light, style.accent]}>
-            {skill}
-          </span>
-        ))}
+      <div class="mt-5">
+        <p class="text-[10px] font-bold tracking-[0.2em] text-gray-500">こんな人に向いています</p>
+        <ul class="mt-2.5 flex flex-wrap gap-2">
+          {
+            role.fit.map((f) => (
+              <li class={`rounded-full px-3 py-1 text-[11px] font-bold ${accentSoft[role.accent]}`}>
+                {f}
+              </li>
+            ))
+          }
+        </ul>
       </div>
     </div>
-  )}
+  </div>
 </article>

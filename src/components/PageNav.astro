@@ -1,0 +1,70 @@
+---
+import { IMAGES } from '../data/site';
+
+interface Props {
+  headline: string;
+  current: 'jobs' | 'people' | 'faq';
+}
+const { headline, current } = Astro.props;
+
+const pages = [
+  {
+    id: 'jobs',
+    href: '/',
+    label: '仕事を知る',
+    en: 'JOBS',
+    desc: '3つの事業領域と、4つの職種。実際の1日の流れまで。',
+    image: IMAGES.heroJobs,
+  },
+  {
+    id: 'people',
+    href: '/people',
+    label: '人を知る',
+    en: 'PEOPLE',
+    desc: '7VALUESと、先輩社員のリアルな声。キャリアパスの実際。',
+    image: IMAGES.heroPeople,
+  },
+  {
+    id: 'faq',
+    href: '/faq',
+    label: '選考を知る',
+    en: 'ENTRY',
+    desc: '選考フロー・募集要項・よくある質問。エントリーはここから。',
+    image: IMAGES.heroFaq,
+  },
+] as const;
+
+const others = pages.filter((p) => p.id !== current);
+---
+
+<section class="bg-surface-muted py-20 md:py-24">
+  <div class="shell">
+    <h2 class="text-center text-xl font-bold text-ink md:text-2xl">{headline}</h2>
+
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      {
+        others.map((p) => (
+          <a href={p.href} class="group relative isolate block overflow-hidden rounded-2xl shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+            <img
+              src={p.image}
+              alt=""
+              class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="absolute inset-0 -z-10 bg-gradient-to-r from-brand-blue-deep/92 via-brand-blue-deep/75 to-brand-blue-deep/40" />
+            <div class="flex min-h-[200px] flex-col justify-center p-8 md:p-10">
+              <p class="text-[10px] font-black tracking-[0.25em] text-white/55">{p.en}</p>
+              <p class="mt-2 text-xl font-black text-white md:text-2xl">{p.label}</p>
+              <p class="mt-3 max-w-sm text-[13px] leading-relaxed text-white/75">{p.desc}</p>
+              <span class="mt-5 inline-flex items-center gap-2 text-xs font-bold text-white">
+                このページを見る
+                <span class="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { CAREER_STEPS, IMAGES } from '../data/site';
+---
+
+<section class="bg-white py-20 md:py-28">
+  <div class="shell grid items-center gap-12 lg:grid-cols-2">
+    <div>
+      <SectionHeading
+        label="04 — Career Path"
+        title="入社してからの、現実的な話"
+        lead="いきなり大きな裁量を渡されるわけではありません。基礎を固めて、任される範囲が広がっていく。その順番を正直に書きます。"
+      />
+
+      <ol class="mt-10 space-y-6">
+        {
+          CAREER_STEPS.map((step, i) => (
+            <li class="relative flex gap-5 pl-1">
+              <div class="flex flex-col items-center">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-blue text-xs font-black text-white">
+                  {i + 1}
+                </span>
+                {i < CAREER_STEPS.length - 1 && <span class="mt-2 w-px flex-1 bg-gray-200" />}
+              </div>
+              <div class="pb-2">
+                <p class="text-[11px] font-black tracking-wider text-brand-blue">{step.phase}</p>
+                <h3 class="mt-1 text-base font-bold text-ink">{step.title}</h3>
+                <p class="mt-2 text-[13px] leading-relaxed text-gray-600">{step.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div class="media-frame aspect-[4/5] shadow-xl">
+      <img src={IMAGES.career} alt="ネオキャリアで働く社員" loading="lazy" decoding="async" />
+    </div>
+  </div>
+</section>

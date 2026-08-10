@@ -1,95 +1,62 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import BusinessSection from '../components/BusinessSection.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ValuesSection from '../components/ValuesSection.astro';
 import EmployeeCard from '../components/EmployeeCard.astro';
 import EmployeeMiniCard from '../components/EmployeeMiniCard.astro';
-import FooterCTA from '../components/FooterCTA.astro';
-
-const featuredEmployees = [
-  {
-    name: '田中 花子',
-    initials: 'T.H',
-    department: '法人営業部',
-    year: '2021',
-    headline: '入社2年目でチームリーダーに。数字より"人"を大切にした営業スタイル',
-    color: 'pink' as const,
-    timeline: [
-      { year: '2021', label: '入社' },
-      { year: '2022', label: 'リーダー' },
-      { year: '2024', label: 'GM' },
-    ],
-    sections: [
-      { title: '入社理由', content: '「人のキャリアを支援する」という会社のミッションに共感しました。自分自身も転職で悩んだ経験があり、同じように悩む人を助けたいと思い入社を決意しました。' },
-      { title: '仕事内容とやりがい', content: '法人クライアントの採用課題をヒアリングし、最適なソリューションを提案しています。提案が受注に繋がった時の達成感は何物にも代えがたいです。' },
-      { title: '将来のビジョン', content: '3年後にはマネージャーとして、後輩の育成にも力を入れたい。チーム全体で成果を出すリーダーになりたいです。' },
-      { title: '好きなところ', content: 'フラットな文化で、若手でも意見を言いやすい。失敗を恐れずチャレンジできる環境が魅力です。' },
-    ],
-    episode: '入社1年目、先輩のサポートなしで初の大型案件を受注。クライアントから「田中さんの提案で採用が変わった」と言われた時、自分の仕事の意味を実感しました。',
-    featured: true,
-  },
-  {
-    name: '佐藤 健太',
-    initials: 'S.K',
-    department: 'キャリアアドバイザー部',
-    year: '2020',
-    headline: '求職者の人生を変える仕事。1件1件に全力で向き合う',
-    color: 'purple' as const,
-    timeline: [
-      { year: '2020', label: '入社' },
-      { year: '2022', label: 'MVP' },
-      { year: '2023', label: '主任' },
-    ],
-    sections: [
-      { title: '入社理由', content: '大学時代に就活支援のボランティアをしていた経験から、人のキャリア支援に携わりたいと考えていました。' },
-      { title: '仕事内容とやりがい', content: '転職希望者との面談を通じて、キャリアプランの設計から内定獲得まで伴走します。内定承諾の連絡をもらった時が最高の瞬間です。' },
-      { title: '将来のビジョン', content: 'キャリアコンサルタントの資格取得を目指し、より専門性の高い支援ができるようスキルアップ中です。' },
-      { title: '好きなところ', content: '数字だけでなく、求職者の満足度も評価に入る点。本質的な支援が評価される文化に共感しています。' },
-    ],
-    episode: '3年間伴走した求職者から、転職先での昇進報告とお礼の手紙をもらいました。「佐藤さんのおかげで人生が変わった」という言葉は今も宝物です。',
-    featured: true,
-  },
-];
-
-const miniEmployees = [
-  { name: '山田 美咲', initials: 'Y.M', headline: '3年目で新規事業を立ち上げ', year: '2022', color: 'green' as const },
-  { name: '鈴木 大輔', initials: 'S.D', headline: 'データ分析で採用DXを推進', year: '2023', color: 'blue' as const },
-  { name: '伊藤 さくら', initials: 'I.S', headline: 'ヘルスケア事業の立ち上げメンバー', year: '2022', color: 'pink' as const },
-  { name: '渡辺 翔', initials: 'W.S', headline: '入社1年目でMVP受賞', year: '2024', color: 'purple' as const },
-];
+import CareerPath from '../components/CareerPath.astro';
+import PageNav from '../components/PageNav.astro';
+import { IMAGES, EMPLOYEES, MINI_EMPLOYEES } from '../data/site';
 ---
 
-<Layout title="働く社員 | NEO CAREER 2027新卒採用">
-  <Header activeNav="people" />
-  <Hero variant="people" />
-  <BusinessSection />
+<Layout
+  title="人を知る"
+  description="ネオキャリアの7VALUESと、実際に働く社員のインタビュー。入社理由からキャリアパスまで、リアルな声を紹介します。"
+  activeNav="people"
+  ogImage={IMAGES.heroPeople}
+>
+  <PageHero
+    eyebrow="PEOPLE — 人を知る"
+    titleLines={['どんな人と、', '働くことになるのか。']}
+    lead="制度やスローガンよりも、隣に座る人がどんな価値観で動いているか。ネオキャリアの“人”を、できるだけ加工せずに見せます。"
+    image={IMAGES.heroPeople}
+    imageAlt="ネオキャリアの社員たち"
+    primary={{ label: '先輩の話を読む', href: '#interview' }}
+    secondary={{ label: '選考を見る', href: '/faq' }}
+    stats={[
+      { value: '7', label: 'VALUES' },
+      { value: '31.0歳', label: '平均年齢' },
+      { value: '2年目〜', label: 'リーダー登用例' },
+      { value: '100', label: '2030年 新規事業目標' },
+    ]}
+    accent="var(--color-brand-purple)"
+  />
 
-  <section class="py-16 md:py-24">
-    <div class="mx-auto max-w-6xl px-4 md:px-6">
-      <p class="section-label mb-2">05 — PEOPLE</p>
-      <h2 class="mb-4 text-2xl font-bold text-gray-900 md:text-3xl">どんな人が働いているの？</h2>
-      <p class="mb-10 max-w-2xl text-gray-600">
-        ネオキャリアで働く先輩社員のリアルな声をお届けします。入社理由から日々の仕事、将来のビジョンまで。
-      </p>
+  <ValuesSection />
 
-      <div class="mb-12 grid gap-8">
-        {featuredEmployees.map((emp) => (
-          <EmployeeCard {...emp} />
-        ))}
+  <section id="interview" class="bg-surface py-20 md:py-28">
+    <div class="shell">
+      <SectionHeading
+        label="03 — Interview"
+        title="先輩社員の、加工しない話"
+        lead="入社理由、やりがい、これから。良いことばかりではない部分も含めて聞きました。"
+      />
+
+      <div class="mt-14 space-y-10">
+        {EMPLOYEES.map((employee) => <EmployeeCard employee={employee} />)}
       </div>
 
-      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {miniEmployees.map((emp) => (
-          <EmployeeMiniCard {...emp} />
-        ))}
+      <div class="mt-14">
+        <p class="text-[11px] font-black tracking-[0.25em] text-gray-400">OTHER MEMBERS</p>
+        <div class="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {MINI_EMPLOYEES.map((employee) => <EmployeeMiniCard employee={employee} />)}
+        </div>
       </div>
     </div>
   </section>
 
-  <FooterCTA
-    headline="この人たちと働く未来を、想像できましたか？"
-    linkPrimary={{ label: '仕事内容を見る', href: '/' }}
-    linkSecondary={{ label: 'よくある質問を見る', href: '/faq' }}
-  />
+  <CareerPath />
+
+  <PageNav headline="この人たちと働く未来を、想像できましたか？" current="people" />
 </Layout>

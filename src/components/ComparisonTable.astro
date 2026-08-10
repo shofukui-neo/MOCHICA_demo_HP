@@ -1,46 +1,55 @@
 ---
-const roles = ['法人営業', 'キャリアアドバイザー', '企画/マーケ', '新規事業/HR Tech'];
-const criteria = [
-  { label: '主な顧客', values: ['法人企業', '転職希望者', '社内外ステークホルダー', 'スタートアップ・VC'] },
-  { label: '成果指標', values: ['売上・受注数', '成約数・満足度', 'KPI達成率', '新規事業売上'] },
-  { label: '1日の中心', values: ['商談・提案', '面談・カウンセリング', '企画・分析', '事業開発'] },
-  { label: '必要スキル', values: ['提案・交渉力', '傾聴・共感力', '論理思考・分析力', '起業家精神'] },
-  { label: '向いている人', values: ['数字で成果を出したい', '人の人生に関わりたい', '仕組みを作りたい', '0→1を経験したい'] },
+import SectionHeading from './SectionHeading.astro';
+
+const rows = [
+  { axis: '向き合う相手', a: '企業の経営者・人事', b: '求職者本人', c: '市場・データ', d: 'プロダクト利用企業' },
+  { axis: '成果の測り方', a: '受注 / 売上', b: '内定・入社決定数', c: 'リード数 / CVR', d: '導入社数 / 継続率' },
+  { axis: '1日の会話量', a: '多い', b: '非常に多い', c: '中程度', d: '中程度' },
+  { axis: '数字とのつきあい', a: '毎日追う', b: '週次で追う', c: '分析が主業務', d: '中長期で追う' },
+  { axis: '成果が出るまで', a: '数週間〜数ヶ月', b: '数週間〜半年', c: '数ヶ月', d: '半年〜数年' },
 ];
+
+const cols = [
+  { key: 'a', label: '法人営業', color: 'text-brand-blue' },
+  { key: 'b', label: 'キャリアアドバイザー', color: 'text-brand-purple' },
+  { key: 'c', label: '企画/マーケ', color: 'text-brand-pink' },
+  { key: 'd', label: '新規事業/HR Tech', color: 'text-brand-orange' },
+] as const;
 ---
 
-<section class="bg-surface-muted py-16 md:py-24">
-  <div class="mx-auto max-w-6xl px-4 md:px-6">
-    <p class="section-label mb-2">03 — COMPARE</p>
-    <h2 class="mb-10 text-2xl font-bold text-gray-900 md:text-3xl">4職種を横に並べて比べる</h2>
+<section class="bg-surface-muted py-20 md:py-28">
+  <div class="shell">
+    <SectionHeading
+      label="03 — Compare"
+      title="4職種を、横に並べて比べる"
+      lead="どれが正解ということはありません。自分がどの軸に惹かれるかで選んでください。"
+    />
 
-    <div class="overflow-x-auto">
-      <table class="w-full min-w-[640px] border-collapse text-sm">
+    <div class="mt-12 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <table class="w-full min-w-[720px] border-collapse text-sm">
         <thead>
-          <tr>
-            <th class="border border-gray-200 bg-white p-3 text-left font-semibold text-gray-500"></th>
-            {roles.map((role, i) => (
-              <th class:list={[
-                'border border-gray-200 p-3 text-center font-bold',
-                i === 0 ? 'bg-brand-green-light text-brand-green' :
-                i === 1 ? 'bg-brand-purple-light text-brand-purple' :
-                i === 2 ? 'bg-brand-pink-light text-brand-pink' :
-                'bg-brand-orange-light text-brand-orange',
-              ]}>
-                {role}
-              </th>
-            ))}
+          <tr class="border-b border-gray-200 bg-white">
+            <th class="w-40 px-5 py-4 text-left text-xs font-bold tracking-wider text-gray-400">
+              比較軸
+            </th>
+            {
+              cols.map((c) => (
+                <th class={`px-5 py-4 text-left text-sm font-bold ${c.color}`}>{c.label}</th>
+              ))
+            }
           </tr>
         </thead>
         <tbody>
-          {criteria.map((row) => (
-            <tr>
-              <td class="border border-gray-200 bg-white p-3 font-medium text-gray-600">{row.label}</td>
-              {row.values.map((val) => (
-                <td class="border border-gray-200 bg-white p-3 text-center text-gray-700">{val}</td>
-              ))}
-            </tr>
-          ))}
+          {
+            rows.map((row, i) => (
+              <tr class:list={['border-b border-gray-100', i % 2 === 1 && 'bg-surface/60']}>
+                <th class="px-5 py-4 text-left text-xs font-bold text-gray-500">{row.axis}</th>
+                {cols.map((c) => (
+                  <td class="px-5 py-4 text-gray-700">{row[c.key]}</td>
+                ))}
+              </tr>
+            ))
+          }
         </tbody>
       </table>
     </div>

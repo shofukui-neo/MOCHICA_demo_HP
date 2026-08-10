@@ -1,0 +1,70 @@
+---
+interface Props {
+  eyebrow: string;
+  titleLines: string[];
+  lead: string;
+  image: string;
+  imageAlt: string;
+  primary: { label: string; href: string };
+  secondary: { label: string; href: string };
+  stats?: { value: string; label: string }[];
+  accent?: string;
+}
+
+const {
+  eyebrow,
+  titleLines,
+  lead,
+  image,
+  imageAlt,
+  primary,
+  secondary,
+  stats = [],
+  accent = 'var(--color-brand-blue)',
+} = Astro.props;
+---
+
+<section class="relative isolate -mt-[73px] overflow-hidden bg-brand-blue-deep pt-[73px]">
+  <img
+    src={image}
+    alt={imageAlt}
+    class="absolute inset-0 -z-20 h-full w-full object-cover"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="hero-scrim absolute inset-0 -z-10"></div>
+  <div class="grid-veil absolute inset-0 -z-10 opacity-60"></div>
+
+  <div class="shell relative flex min-h-[560px] flex-col justify-center py-16 md:min-h-[640px] md:py-24">
+    <div class="max-w-2xl reveal">
+      <span class="eyebrow-pill">
+        <span class="h-1.5 w-1.5 rounded-full" style={`background:${accent}`}></span>
+        {eyebrow}
+      </span>
+
+      <h1 class="mt-6 text-[2rem] font-black leading-[1.15] tracking-tight text-white md:text-6xl">
+        {titleLines.map((line) => <span class="block">{line}</span>)}
+      </h1>
+
+      <p class="mt-6 max-w-xl text-sm leading-relaxed text-white/85 md:text-lg">{lead}</p>
+
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href={primary.href} class="btn-primary">{primary.label}</a>
+        <a href={secondary.href} class="btn-ghost-light">{secondary.label}</a>
+      </div>
+    </div>
+
+    {
+      stats.length > 0 && (
+        <dl class="mt-12 grid max-w-2xl grid-cols-2 gap-x-6 gap-y-5 border-t border-white/20 pt-7 md:grid-cols-4">
+          {stats.map((s) => (
+            <div>
+              <dd class="text-2xl font-black text-white md:text-3xl">{s.value}</dd>
+              <dt class="mt-1 text-[11px] font-bold tracking-wider text-white/60">{s.label}</dt>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+  </div>
+</section>

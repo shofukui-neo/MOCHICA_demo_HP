@@ -1,0 +1,66 @@
+---
+import { IMAGES } from '../data/site';
+---
+
+<section id="entry" class="relative isolate overflow-hidden bg-brand-blue-deep py-20 md:py-28">
+  <img
+    src={IMAGES.future}
+    alt=""
+    class="absolute inset-0 -z-20 h-full w-full object-cover opacity-30"
+    loading="lazy"
+    decoding="async"
+  />
+  <div class="grid-veil absolute inset-0 -z-10"></div>
+
+  <div class="shell text-center">
+    <p class="section-label text-brand-blue-light/70">Entry</p>
+    <h2 class="mt-4 text-2xl font-black leading-tight text-white md:text-4xl">
+      迷っているなら、<br class="sm:hidden" />まず話を聞きに来てください。
+    </h2>
+    <p class="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/75">
+      エントリーは1分で完了します。説明会はオンライン開催もあり、選考に進むかどうかはその後で決めていただいて構いません。
+    </p>
+
+    <div class="mt-10 flex flex-wrap justify-center gap-3">
+      <a href="#entry-form" class="btn-primary">エントリーする</a>
+      <a href="#entry-form" class="btn-ghost-light">説明会を予約する</a>
+    </div>
+
+    <div
+      id="entry-form"
+      class="mx-auto mt-14 max-w-xl rounded-2xl border border-white/20 bg-white/10 p-7 text-left backdrop-blur md:p-9"
+    >
+      <p class="text-[11px] font-black tracking-[0.2em] text-white/60">DEMO FORM</p>
+      <p class="mt-2 text-sm text-white/80">
+        本デモではフォーム送信は行われません。実運用ではMOCHICAのエントリーフォームに接続します。
+      </p>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        <label class="block">
+          <span class="text-[11px] font-bold text-white/70">お名前</span>
+          <input
+            type="text"
+            disabled
+            placeholder="ネオ 太郎"
+            class="mt-1.5 w-full rounded-lg border border-white/25 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-white/40"
+          />
+        </label>
+        <label class="block">
+          <span class="text-[11px] font-bold text-white/70">メールアドレス</span>
+          <input
+            type="email"
+            disabled
+            placeholder="taro@example.com"
+            class="mt-1.5 w-full rounded-lg border border-white/25 bg-white/10 px-4 py-2.5 text-sm text-white placeholder-white/40"
+          />
+        </label>
+      </div>
+      <button
+        type="button"
+        disabled
+        class="mt-6 w-full cursor-not-allowed rounded-full bg-white/25 px-8 py-3.5 text-sm font-bold text-white/60"
+      >
+        送信（デモのため無効）
+      </button>
+    </div>
+  </div>
+</section>

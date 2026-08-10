@@ -1,25 +1,41 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import BusinessSection from '../components/BusinessSection.astro';
-import FAQSection from '../components/FAQSection.astro';
-import RecruitmentTable from '../components/RecruitmentTable.astro';
+import PageHero from '../components/PageHero.astro';
 import SelectionFlow from '../components/SelectionFlow.astro';
-import FooterCTA from '../components/FooterCTA.astro';
+import RecruitmentTable from '../components/RecruitmentTable.astro';
+import FAQSection from '../components/FAQSection.astro';
+import EntryCTA from '../components/EntryCTA.astro';
+import PageNav from '../components/PageNav.astro';
+import { IMAGES } from '../data/site';
 ---
 
-<Layout title="よくある質問 | NEO CAREER 2027新卒採用">
-  <Header activeNav="faq" />
-  <Hero variant="faq" />
-  <BusinessSection />
-  <FAQSection />
-  <RecruitmentTable />
-  <SelectionFlow />
-
-  <FooterCTA
-    headline="不安が消えたら、次はエントリーです"
-    linkPrimary={{ label: '仕事内容を見る', href: '/' }}
-    linkSecondary={{ label: '先輩社員の話を読む', href: '/people' }}
+<Layout
+  title="選考を知る"
+  description="ネオキャリア2027年新卒採用の選考フロー・募集要項・よくある質問。エントリーはこのページから。"
+  activeNav="faq"
+  ogImage={IMAGES.heroFaq}
+>
+  <PageHero
+    eyebrow="ENTRY — 選考を知る"
+    titleLines={['不安を、', '全部つぶしてから。']}
+    lead="選考の流れ、募集要項、そして聞きにくい質問への回答。判断に必要な情報を、この1ページに集めました。"
+    image={IMAGES.heroFaq}
+    imageAlt="ネオキャリアの選考風景"
+    primary={{ label: 'エントリーする', href: '#entry' }}
+    secondary={{ label: '募集要項を見る', href: '#requirements' }}
+    stats={[
+      { value: '通年', label: 'エントリー受付' },
+      { value: '3〜4週間', label: '内定までの平均' },
+      { value: 'オンライン可', label: '全選考プロセス' },
+      { value: '文理不問', label: '応募資格' },
+    ]}
+    accent="var(--color-brand-orange)"
   />
+
+  <SelectionFlow />
+  <RecruitmentTable />
+  <FAQSection />
+  <EntryCTA />
+
+  <PageNav headline="他のページも見ておきますか？" current="faq" />
 </Layout>

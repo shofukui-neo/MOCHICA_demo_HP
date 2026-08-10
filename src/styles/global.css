@@ -1,47 +1,148 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-blue: #2563eb;
-  --color-brand-blue-dark: #1d4ed8;
-  --color-brand-blue-light: #dbeafe;
-  --color-brand-green: #16a34a;
+  --color-brand-blue: #1a5fd0;
+  --color-brand-blue-dark: #123f8c;
+  --color-brand-blue-deep: #0a1f3d;
+  --color-brand-blue-light: #e5efff;
+  --color-brand-green: #0f9e5e;
   --color-brand-green-light: #dcfce7;
-  --color-brand-purple: #7c3aed;
+  --color-brand-purple: #6d3aed;
   --color-brand-purple-light: #ede9fe;
-  --color-brand-pink: #db2777;
+  --color-brand-pink: #d61f6e;
   --color-brand-pink-light: #fce7f3;
-  --color-brand-orange: #ea580c;
+  --color-brand-orange: #e0640c;
   --color-brand-orange-light: #ffedd5;
-  --color-brand-yellow: #f59e0b;
+  --color-brand-yellow: #f0a91b;
   --color-brand-yellow-light: #fef3c7;
-  --color-surface: #fafaf8;
-  --color-surface-muted: #f5f5f3;
+  --color-surface: #fbfbf9;
+  --color-surface-muted: #f3f4f6;
+  --color-ink: #0f172a;
   --font-sans: "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--color-surface);
-  color: #1f2937;
-  line-height: 1.75;
+  color: var(--color-ink);
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* ---------- typography ---------- */
 .section-label {
-  @apply text-xs font-semibold tracking-widest text-gray-400 uppercase;
+  @apply text-[11px] font-bold tracking-[0.25em] text-brand-blue uppercase;
 }
 
+.section-title {
+  @apply text-2xl font-bold leading-tight text-ink md:text-4xl;
+}
+
+.section-lead {
+  @apply mt-4 max-w-2xl text-sm leading-relaxed text-gray-600 md:text-base;
+}
+
+/* ---------- buttons ---------- */
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-full bg-brand-blue px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-blue-dark;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-blue px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-brand-blue-dark hover:shadow-xl;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-full border-2 border-gray-300 bg-white px-8 py-3 text-sm font-semibold text-gray-700 transition hover:border-brand-blue hover:text-brand-blue;
+  @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-gray-300 bg-white/90 px-8 py-3.5 text-sm font-bold text-gray-700 backdrop-blur transition hover:-translate-y-0.5 hover:border-brand-blue hover:text-brand-blue;
 }
 
+.btn-ghost-light {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/70 px-8 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-white hover:text-brand-blue-deep;
+}
+
+/* ---------- surfaces ---------- */
 .card {
   @apply rounded-2xl border border-gray-200 bg-white shadow-sm;
+}
+
+.card-lift {
+  @apply rounded-2xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl;
+}
+
+.shell {
+  @apply mx-auto w-full max-w-6xl px-5 md:px-8;
+}
+
+.eyebrow-pill {
+  @apply inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-4 py-1.5 text-[11px] font-bold tracking-[0.2em] text-white backdrop-blur;
+}
+
+/* ---------- media ---------- */
+.media-frame {
+  @apply relative overflow-hidden rounded-2xl bg-surface-muted;
+}
+
+.media-frame img {
+  @apply h-full w-full object-cover transition duration-700;
+}
+
+.media-frame:hover img {
+  @apply scale-105;
+}
+
+/* ---------- decorative ---------- */
+.hero-scrim {
+  background: linear-gradient(
+    100deg,
+    rgba(10, 31, 61, 0.93) 0%,
+    rgba(10, 31, 61, 0.8) 42%,
+    rgba(10, 31, 61, 0.38) 78%,
+    rgba(10, 31, 61, 0.18) 100%
+  );
+}
+
+.grid-veil {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* ---------- entrance animation ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.reveal {
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .media-frame img {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- FAQ disclosure ---------- */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .faq-chevron {
+  transform: rotate(45deg);
 }

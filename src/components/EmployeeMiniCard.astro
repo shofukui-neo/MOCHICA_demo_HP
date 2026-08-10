@@ -1,26 +1,29 @@
 ---
 interface Props {
-  name: string;
-  initials: string;
-  headline: string;
-  year: string;
-  color: 'pink' | 'purple' | 'green' | 'blue';
+  employee: {
+    name: string;
+    initials: string;
+    headline: string;
+    joined: string;
+    dept: string;
+    accent: string;
+  };
 }
+const { employee: e } = Astro.props;
 
-const { name, initials, headline, year, color } = Astro.props;
-
-const colorStyles: Record<string, string> = {
-  pink: 'bg-brand-pink',
-  purple: 'bg-brand-purple',
-  green: 'bg-brand-green',
+const accentBg: Record<string, string> = {
   blue: 'bg-brand-blue',
+  purple: 'bg-brand-purple',
+  pink: 'bg-brand-pink',
+  green: 'bg-brand-green',
 };
 ---
 
-<div class="card p-4 text-center">
-  <div class:list={['mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full text-sm font-bold text-white', colorStyles[color]]}>
-    {initials}
+<div class="card-lift flex flex-col p-6">
+  <div class={`flex h-12 w-12 items-center justify-center rounded-xl text-sm font-black text-white ${accentBg[e.accent]}`}>
+    {e.initials}
   </div>
-  <p class="mb-1 text-sm font-bold text-gray-900">{headline}</p>
-  <p class="text-xs text-gray-500">{name} / {year}入社</p>
+  <p class="mt-4 text-sm font-bold text-ink">{e.name}</p>
+  <p class="text-[11px] text-gray-500">{e.dept} / {e.joined}年入社</p>
+  <p class="mt-3 flex-1 text-[13px] leading-relaxed text-gray-600">{e.headline}</p>
 </div>
