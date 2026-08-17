@@ -1,0 +1,43 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import EmployeeCard from './EmployeeCard.astro';
+import EmployeeMiniCard from './EmployeeMiniCard.astro';
+import type { InterviewContent } from '../config/schema';
+
+interface Props {
+  content: InterviewContent;
+}
+
+const { content } = Astro.props;
+---
+
+<section id={content.id} class="bg-surface py-20 md:py-28">
+  <div class="shell">
+    <SectionHeading content={content.heading} />
+
+    <div class="mt-14 space-y-10">
+      {
+        content.employees.map((employee) => (
+          <EmployeeCard
+            employee={employee}
+            joinedSuffix={content.joinedSuffix}
+            episodeLabel={content.episodeLabel}
+          />
+        ))
+      }
+    </div>
+
+    {
+      content.others.length > 0 && (
+        <div class="mt-14">
+          <p class="text-[11px] font-black tracking-[0.25em] text-gray-400">{content.othersLabel}</p>
+          <div class="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {content.others.map((employee) => (
+              <EmployeeMiniCard employee={employee} joinedSuffix={content.joinedSuffix} />
+            ))}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</section>

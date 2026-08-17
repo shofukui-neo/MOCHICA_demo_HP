@@ -1,42 +1,29 @@
 ---
 import SectionHeading from './SectionHeading.astro';
-import { BUSINESSES } from '../data/site';
+import { accentBg, accentChip, accentText } from '../config';
+import type { BusinessContent } from '../config/schema';
 
-const accentBar: Record<string, string> = {
-  blue: 'bg-brand-blue',
-  green: 'bg-brand-green',
-  orange: 'bg-brand-orange',
-};
-const accentText: Record<string, string> = {
-  blue: 'text-brand-blue',
-  green: 'text-brand-green',
-  orange: 'text-brand-orange',
-};
-const accentChip: Record<string, string> = {
-  blue: 'bg-brand-blue-light text-brand-blue',
-  green: 'bg-brand-green-light text-brand-green',
-  orange: 'bg-brand-orange-light text-brand-orange',
-};
+interface Props {
+  content: BusinessContent;
+}
+
+const { content } = Astro.props;
 ---
 
-<section id="business" class="bg-white py-20 md:py-28">
+<section id={content.id} class="bg-white py-20 md:py-28">
   <div class="shell">
-    <SectionHeading
-      label="01 — Business"
-      title="結局、何をやっている会社？"
-      lead="ネオキャリアは「採用支援」「就労支援」「業務支援」の3領域で事業を展開しています。人材ビジネスを軸にしながら、施設運営やシステム開発まで自社で手がけているのが特徴です。"
-    />
+    <SectionHeading content={content.heading} />
 
     <div class="mt-14 grid gap-7 md:grid-cols-3">
       {
-        BUSINESSES.map((biz) => (
+        content.items.map((biz) => (
           <article class="card-lift group flex flex-col overflow-hidden">
             <div class="media-frame aspect-[16/10] rounded-none">
-              <img src={biz.image} alt={`${biz.title}のイメージ`} loading="lazy" decoding="async" />
+              <img src={biz.image.src} alt={biz.image.alt} loading="lazy" decoding="async" />
             </div>
             <div class="flex flex-1 flex-col p-7">
               <div class="flex items-center gap-3">
-                <span class={`h-8 w-1 rounded-full ${accentBar[biz.accent]}`} />
+                <span class={`h-8 w-1 rounded-full ${accentBg[biz.accent]}`} />
                 <div>
                   <p class={`text-[10px] font-bold tracking-[0.2em] ${accentText[biz.accent]}`}>
                     {biz.no} / {biz.en}
@@ -45,21 +32,21 @@ const accentChip: Record<string, string> = {
                 </div>
               </div>
               <p class="mt-4 flex-1 text-sm leading-relaxed text-gray-600">{biz.description}</p>
-              <ul class="mt-5 flex flex-wrap gap-2">
-                {biz.tags.map((t) => (
-                  <li class={`rounded-full px-3 py-1 text-[11px] font-bold ${accentChip[biz.accent]}`}>
-                    {t}
-                  </li>
-                ))}
-              </ul>
+              {biz.tags.length > 0 && (
+                <ul class="mt-5 flex flex-wrap gap-2">
+                  {biz.tags.map((t) => (
+                    <li class={`rounded-full px-3 py-1 text-[11px] font-bold ${accentChip[biz.accent]}`}>
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </article>
         ))
       }
     </div>
 
-    <p class="mt-10 text-center text-xs text-gray-500">
-      200以上の求人メディアを取り扱い、全国60拠点以上のネットワークで採用課題に応えています。
-    </p>
+    {content.note && <p class="mt-10 text-center text-xs text-gray-500">{content.note}</p>}
   </div>
 </section>

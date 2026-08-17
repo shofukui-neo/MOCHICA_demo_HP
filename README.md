@@ -21,20 +21,22 @@
 title・description・canonical・og:image・JSON-LD もサイトごとに独立しているため、
 それぞれが個別に検索流入・SNS流入できます。
 
-### サブドメインを変更する
+### 配信URLを変更する
 
-`src/data/site.ts` の `ORIGINS` の3行だけ書き換えれば、canonical / og:url / JSON-LD に反映されます。
+`src/config/site.config.ts` の `origins` の3行を書き換えれば、canonical / og:url / JSON-LD に
+反映されます。**Pages のプロジェクト名とURLは必ず一致させてください**
+（`pages.dev` のサブドメインはプロジェクト名から決まります）。
 
 ```ts
-export const ORIGINS = {
+origins: {
   jobs: 'https://mochica-jobs.pages.dev',
   people: 'https://mochica-people.pages.dev',
   faq: 'https://mochica-faq.pages.dev',
-} as const;
+},
 ```
 
-独自ドメインを使う場合は `https://jobs.example.com` のように書き換え、
-Cloudflare Pages 側で各プロジェクトにカスタムドメインを割り当ててください。
+独自ドメインを使う場合は `https://jobs.example.com` のように書き換え、各 Pages プロジェクトに
+カスタムドメインを割り当ててください（[docs/cloudflare-setup.md](docs/cloudflare-setup.md) の7章）。
 
 ## ビルドの仕組み
 
@@ -52,33 +54,61 @@ dist/faq/index.html    →  dist-faq/index.html
 `_astro/` と favicon などの共有アセットは各出力に複製されます。
 分割後のディレクトリには他サイトのHTMLは含まれません。
 
-## コンテンツ・画像の管理
+## コンテンツ・画像の管理（テンプレートとしての使い方）
 
-コンテンツと画像URLは **`src/data/site.ts` に一元管理**しています。
-文言差し替え・画像差し替えはこのファイルだけを触れば全サイトに反映されます。
+3ページとも **文言・画像・配色をすべて外から差し込む**構造になっています。
+ページ（`src/pages/`）とコンポーネント（`src/components/`）に文言・画像URLは一切入っていません。
+
+**`src/config/site.config.ts` を書き換えるだけで、3サイトすべての中身が入れ替わります。**
+どの企業でも、文章と画像さえ用意すれば同じテンプレートのサイトが作れます。
+
+**詳細な手順は [docs/content-guide.md](docs/content-guide.md) を参照してください。**
 
 ```
-src/data/site.ts
-├─ IMAGES        画像URL（現在は neo-career.co.jp の公開画像を直リンク）
-├─ SITE          サイト共通情報・PURPOSE
-├─ ORIGINS       3サイトの配信オリジン（canonical / OG の基準）
-├─ FACTS         会社数値（創業/従業員数/売上/拠点）
-├─ BUSINESSES    事業3領域
-├─ JOB_ROLES     職種4種（1日の流れ・向いている人）
-├─ VALUES        7 VALUES
-├─ EMPLOYEES     社員インタビュー
-├─ CAREER_STEPS  キャリアパス
-├─ FAQS          よくある質問
-├─ REQUIREMENTS  募集要項
-└─ SELECTION_FLOW 選考フロー
+src/config/
+├─ site.config.ts      ★ 文言・画像・配色・配信URLのすべて（ここだけ編集する）
+├─ starter.config.ts   白紙のひな形（新規企業はこれをコピーして使う）
+├─ schema.ts           型定義。各項目の意味がコメントで書かれている
+└─ index.ts            読み込み口・アクセント色の対応表
 ```
+
+```
+siteConfig
+├─ brand        社名・呼称・採用年度・PURPOSE・ロゴ・住所
+├─ theme        配色（15色）・フォント
+├─ meta         lang / <title>の組み立て方 / og:site_name
+├─ origins      3サイトの配信オリジン（canonical / OG の基準）
+├─ header       ロゴ横の表記・CTAボタン
+├─ footer       外部リンク・注記・コピーライト
+├─ entry        エントリーセクション（3ページ共通・末尾に配置）
+└─ pages
+   ├─ jobs      meta / hero / business / numbers / jobRoles / comparison
+   ├─ people    meta / hero / values / interview / careerPath
+   └─ faq       meta / hero / flow / requirements / faq
+```
+
+### 新しい企業のサイトを作る
+
+```bash
+cp src/config/starter.config.ts src/config/site.config.ts  # ひな形をコピー
+# public/images/ に画像を配置し、site.config.ts の「◯◯」を書き換える
+npm run dev
+```
+
+- **セクションを消す**: config のそのブロックを丸ごと削除すれば出力されません
+- **件数を増減する**: 配列の要素を足し引きするだけ。レイアウトは自動で追従します
+- **配色を変える**: `theme.colors` を書き換えれば全ページに反映されます
+- **フォームを有効化する**: `entry.form.action` に送信先URLを指定すると実フォームになります
+
+`site.config.ts` には `SiteConfig` 型が付いているため、項目名の打ち間違いや
+必須項目の書き忘れはエディタ上で赤線として表示されます。
 
 ### 画像をローカル配信に切り替える手順
 
 現状はコーポレートサイトの画像を直リンクしています。本番運用では自前配信を推奨します。
 
-1. 画像を `public/images/` に配置
-2. `src/data/site.ts` の `IMAGES` の値を `/images/xxx.jpg` に変更
+1. 画像を `public/images/` に配置（推奨サイズは [docs/images.md](docs/images.md)）
+2. `src/config/site.config.ts` 冒頭の `images` の値を `/images/xxx.jpg` に変更
 3. `npm run build` → push
 
 ## 技術スタック
@@ -101,18 +131,29 @@ npm run preview  # ビルド結果を確認
 
 ## Cloudflare Pages 設定
 
+**詳細な手順は [docs/cloudflare-setup.md](docs/cloudflare-setup.md) を参照してください。**
+
 **Pages プロジェクトを3つ**作成し、いずれも同じリポジトリ・同じビルドコマンドを指定します。
-異なるのは「ビルド出力ディレクトリ」だけです。
+異なるのはプロジェクト名とビルド出力ディレクトリだけです。
 
-| プロジェクト名 | ビルドコマンド | ビルド出力ディレクトリ |
-|----------------|----------------|------------------------|
-| `mochica-jobs` | `npm run build` | `dist-jobs` |
-| `mochica-people` | `npm run build` | `dist-people` |
-| `mochica-faq` | `npm run build` | `dist-faq` |
+| プロジェクト名 | Framework preset | ビルドコマンド | ビルド出力ディレクトリ |
+|----------------|------------------|----------------|------------------------|
+| `mochica-jobs` | `None` | `npm run build` | `dist-jobs` |
+| `mochica-people` | `None` | `npm run build` | `dist-people` |
+| `mochica-faq` | `None` | `npm run build` | `dist-faq` |
 
-環境変数はいずれも `NODE_VERSION` = `22.12.0`（Astro 7.x が Node >= 22.12.0 を要求）。
+環境変数の設定は不要です。リポジトリ直下の `.node-version`（`22.12.0`）を Cloudflare が
+自動で読むため、Astro 7.x が要求する Node >= 22.12.0 が満たされます。
 
 `main` ブランチへの push で3プロジェクトそれぞれが自動ビルド・デプロイされます。
+
+> **ビルド出力ディレクトリを必ず入力してください。** 空欄のままだとリポジトリのルートが
+> そのまま配信され、**ビルドは成功するのにサイトが404になります**。ビルドログにエラーが
+> 出ないため原因が分かりにくい失敗です。デプロイURLに `/package.json` を付けて開き、
+> JSONが表示されたらこの状態です。
+>
+> **Framework preset は `None` にしてください。** `Astro` を選ぶと出力先が `dist` で
+> 埋められます。`dist` は3ページ全部入りなのでサブドメイン分離が壊れます。
 
 ### CLI から手動デプロイする場合
 
@@ -123,12 +164,8 @@ npm run deploy:people
 npm run deploy:faq
 ```
 
-> **Workers ではなく Pages を使っています。** `wrangler deploy`（Workers）は wrangler 設定ファイルが
-> 無いと自動セットアップ（`astro add cloudflare`）を実行し、不要な SSR アダプターを追加します。
-> その結果ビルド時に Workers ランタイム（miniflare）が起動し、自動生成される `compatibility_date` が
-> 同梱 workerd の対応日を追い越してビルドが失敗します。
-> `wrangler pages deploy` はこの自動セットアップを行わないため、この問題は発生しません。
-> リポジトリに Workers 用の `wrangler.jsonc` を置くと `pages deploy` 側がエラーになるので、置かないこと。
+> リポジトリのルートに `wrangler.jsonc` / `wrangler.toml` を置かないでください。
+> `wrangler pages deploy` がエラーになります。
 
 ## 注意
 

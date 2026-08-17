@@ -1,47 +1,26 @@
 ---
-interface Props {
-  employee: {
-    name: string;
-    initials: string;
-    department: string;
-    joined: string;
-    accent: string;
-    image: string;
-    headline: string;
-    timeline: readonly { year: string; label: string }[];
-    sections: readonly { title: string; content: string }[];
-    episode: string;
-  };
-}
-const { employee: e } = Astro.props;
+import { accentBg, accentBgLight, accentText } from '../config';
+import type { InterviewContent } from '../config/schema';
 
-const accentText: Record<string, string> = {
-  blue: 'text-brand-blue',
-  purple: 'text-brand-purple',
-  pink: 'text-brand-pink',
-  green: 'text-brand-green',
-};
-const accentBg: Record<string, string> = {
-  blue: 'bg-brand-blue',
-  purple: 'bg-brand-purple',
-  pink: 'bg-brand-pink',
-  green: 'bg-brand-green',
-};
-const accentSoft: Record<string, string> = {
-  blue: 'bg-brand-blue-light',
-  purple: 'bg-brand-purple-light',
-  pink: 'bg-brand-pink-light',
-  green: 'bg-brand-green-light',
-};
+interface Props {
+  employee: InterviewContent['employees'][number];
+  /** 入社年の後ろに付ける語（例: 年入社） */
+  joinedSuffix: string;
+  /** エピソード欄の小見出し */
+  episodeLabel: string;
+}
+const { employee: e, joinedSuffix, episodeLabel } = Astro.props;
 ---
 
 <article class="card overflow-hidden">
   <div class="grid lg:grid-cols-[minmax(0,340px)_1fr]">
     <div class="media-frame aspect-[4/3] rounded-none lg:aspect-auto">
-      <img src={e.image} alt={`${e.department} ${e.name}`} loading="lazy" decoding="async" />
+      <img src={e.image.src} alt={e.image.alt} loading="lazy" decoding="async" />
       <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-        <p class={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black text-white ${accentBg[e.accent]}`}>
-          {e.joined}年入社
+        <p
+          class={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-black text-white ${accentBg[e.accent]}`}
+        >
+          {e.joined}{joinedSuffix}
         </p>
         <p class="mt-2 text-lg font-bold text-white">{e.name}</p>
         <p class="text-xs text-white/75">{e.department}</p>
@@ -51,19 +30,21 @@ const accentSoft: Record<string, string> = {
     <div class="p-7 md:p-10">
       <h3 class="text-lg font-bold leading-snug text-ink md:text-xl">{e.headline}</h3>
 
-      <ol class="mt-6 flex flex-wrap items-center gap-x-2 gap-y-3">
-        {
-          e.timeline.map((t, i) => (
-            <li class="flex items-center gap-2">
-              {i > 0 && <span class="text-gray-300">→</span>}
-              <span class={`rounded-lg px-3 py-1.5 ${accentSoft[e.accent]}`}>
-                <span class={`text-[10px] font-black ${accentText[e.accent]}`}>{t.year}</span>
-                <span class="ml-1.5 text-[11px] font-bold text-gray-700">{t.label}</span>
-              </span>
-            </li>
-          ))
-        }
-      </ol>
+      {
+        e.timeline.length > 0 && (
+          <ol class="mt-6 flex flex-wrap items-center gap-x-2 gap-y-3">
+            {e.timeline.map((t, i) => (
+              <li class="flex items-center gap-2">
+                {i > 0 && <span class="text-gray-300">→</span>}
+                <span class={`rounded-lg px-3 py-1.5 ${accentBgLight[e.accent]}`}>
+                  <span class={`text-[10px] font-black ${accentText[e.accent]}`}>{t.year}</span>
+                  <span class="ml-1.5 text-[11px] font-bold text-gray-700">{t.label}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        )
+      }
 
       <dl class="mt-7 grid gap-5 sm:grid-cols-2">
         {
@@ -78,10 +59,14 @@ const accentSoft: Record<string, string> = {
         }
       </dl>
 
-      <blockquote class="mt-7 rounded-xl bg-surface-muted p-5">
-        <p class="text-[10px] font-black tracking-[0.2em] text-gray-400">EPISODE</p>
-        <p class="mt-2 text-[13px] leading-relaxed text-gray-700">{e.episode}</p>
-      </blockquote>
+      {
+        e.episode && (
+          <blockquote class="mt-7 rounded-xl bg-surface-muted p-5">
+            <p class="text-[10px] font-black tracking-[0.2em] text-gray-400">{episodeLabel}</p>
+            <p class="mt-2 text-[13px] leading-relaxed text-gray-700">{e.episode}</p>
+          </blockquote>
+        )
+      }
     </div>
   </div>
 </article>

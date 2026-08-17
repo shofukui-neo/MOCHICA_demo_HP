@@ -1,19 +1,21 @@
 ---
 import SectionHeading from './SectionHeading.astro';
-import { FAQS } from '../data/site';
+import type { FaqContent } from '../config/schema';
+
+interface Props {
+  content: FaqContent;
+}
+
+const { content } = Astro.props;
 ---
 
-<section id="faq" class="bg-white py-20 md:py-28">
+<section id={content.id} class="bg-white py-20 md:py-28">
   <div class="shell">
-    <SectionHeading
-      label="04 — FAQ"
-      title="聞きにくいことも、全部答えます"
-      lead="説明会で実際によく出る質問をまとめました。ここに無いことは、面談で遠慮なく聞いてください。"
-    />
+    <SectionHeading content={content.heading} />
 
     <div class="mt-14 space-y-12">
       {
-        FAQS.map((group) => (
+        content.groups.map((group) => (
           <div>
             <h3 class="flex items-center gap-3 text-sm font-black text-ink">
               <span class="h-4 w-1 rounded-full bg-brand-blue" />
@@ -24,7 +26,7 @@ import { FAQS } from '../data/site';
                 <details class="card group overflow-hidden">
                   <summary class="flex items-center justify-between gap-4 px-6 py-5 transition hover:bg-surface">
                     <span class="text-sm font-bold text-ink">
-                      <span class="mr-2 font-black text-brand-blue">Q.</span>
+                      <span class="mr-2 font-black text-brand-blue">{content.questionPrefix}</span>
                       {item.q}
                     </span>
                     <span class="faq-chevron shrink-0 text-lg font-light text-brand-blue transition-transform duration-300">
@@ -33,7 +35,7 @@ import { FAQS } from '../data/site';
                   </summary>
                   <div class="border-t border-gray-100 bg-surface/60 px-6 py-5">
                     <p class="text-[13px] leading-relaxed text-gray-700">
-                      <span class="mr-2 font-black text-gray-400">A.</span>
+                      <span class="mr-2 font-black text-gray-400">{content.answerPrefix}</span>
                       {item.a}
                     </p>
                   </div>

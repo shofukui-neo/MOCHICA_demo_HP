@@ -1,8 +1,10 @@
 ---
-import { IMAGES } from '../data/site';
+import { siteConfig } from '../config';
 
 // 3サイトは完全に独立しているため、他サイトへのナビゲーションは持たない。
 // ヘッダーはロゴ（自サイトのルート）と、同一ページ内のエントリーセクションへの導線のみ。
+// 表示される文言・ロゴ画像はすべて src/config/site.config.ts の header / brand から供給される。
+const { header, brand } = siteConfig;
 ---
 
 <header
@@ -11,10 +13,10 @@ import { IMAGES } from '../data/site';
   data-state="top"
 >
   <div class="shell flex items-center justify-between py-3.5">
-    <a href="/" class="flex items-center gap-2.5" aria-label="NEO CAREER トップへ">
+    <a href={header.homeHref} class="flex items-center gap-2.5" aria-label={header.homeAriaLabel}>
       <img
-        src={IMAGES.icon}
-        alt=""
+        src={brand.logo.src}
+        alt={brand.logo.alt}
         width="32"
         height="32"
         class="h-8 w-8 rounded-lg"
@@ -22,15 +24,15 @@ import { IMAGES } from '../data/site';
       />
       <span class="flex flex-col leading-none">
         <span id="brand-word" class="text-[15px] font-black tracking-tight transition-colors"
-          >NEO CAREER</span
+          >{header.brandName}</span
         >
         <span id="brand-sub" class="mt-0.5 text-[9px] font-bold tracking-[0.2em] transition-colors"
-          >2027 NEW GRADUATE</span
+          >{header.brandSub}</span
         >
       </span>
     </a>
 
-    <a href="#entry" class="btn-primary px-6 py-2.5 text-xs">エントリー</a>
+    <a href={header.cta.href} class="btn-primary px-6 py-2.5 text-xs">{header.cta.label}</a>
   </div>
 </header>
 

@@ -1,51 +1,44 @@
 ---
 import SectionHeading from './SectionHeading.astro';
+import { accentText } from '../config';
+import type { ComparisonContent } from '../config/schema';
 
-const rows = [
-  { axis: '向き合う相手', a: '企業の経営者・人事', b: '求職者本人', c: '市場・データ', d: 'プロダクト利用企業' },
-  { axis: '成果の測り方', a: '受注 / 売上', b: '内定・入社決定数', c: 'リード数 / CVR', d: '導入社数 / 継続率' },
-  { axis: '1日の会話量', a: '多い', b: '非常に多い', c: '中程度', d: '中程度' },
-  { axis: '数字とのつきあい', a: '毎日追う', b: '週次で追う', c: '分析が主業務', d: '中長期で追う' },
-  { axis: '成果が出るまで', a: '数週間〜数ヶ月', b: '数週間〜半年', c: '数ヶ月', d: '半年〜数年' },
-];
+interface Props {
+  content: ComparisonContent;
+}
 
-const cols = [
-  { key: 'a', label: '法人営業', color: 'text-brand-blue' },
-  { key: 'b', label: 'キャリアアドバイザー', color: 'text-brand-purple' },
-  { key: 'c', label: '企画/マーケ', color: 'text-brand-pink' },
-  { key: 'd', label: '新規事業/HR Tech', color: 'text-brand-orange' },
-] as const;
+const { content } = Astro.props;
+// 横スクロールの下限幅を列数から決める（列が増えても潰れないようにする）
+const minWidth = 160 + content.columns.length * 140;
 ---
 
-<section class="bg-surface-muted py-20 md:py-28">
+<section id={content.id} class="bg-surface-muted py-20 md:py-28">
   <div class="shell">
-    <SectionHeading
-      label="03 — Compare"
-      title="4職種を、横に並べて比べる"
-      lead="どれが正解ということはありません。自分がどの軸に惹かれるかで選んでください。"
-    />
+    <SectionHeading content={content.heading} />
 
     <div class="mt-12 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
-      <table class="w-full min-w-[720px] border-collapse text-sm">
+      <table class="w-full border-collapse text-sm" style={`min-width:${minWidth}px`}>
         <thead>
           <tr class="border-b border-gray-200 bg-white">
             <th class="w-40 px-5 py-4 text-left text-xs font-bold tracking-wider text-gray-400">
-              比較軸
+              {content.axisLabel}
             </th>
             {
-              cols.map((c) => (
-                <th class={`px-5 py-4 text-left text-sm font-bold ${c.color}`}>{c.label}</th>
+              content.columns.map((c) => (
+                <th class={`px-5 py-4 text-left text-sm font-bold ${accentText[c.accent]}`}>
+                  {c.label}
+                </th>
               ))
             }
           </tr>
         </thead>
         <tbody>
           {
-            rows.map((row, i) => (
+            content.rows.map((row, i) => (
               <tr class:list={['border-b border-gray-100', i % 2 === 1 && 'bg-surface/60']}>
                 <th class="px-5 py-4 text-left text-xs font-bold text-gray-500">{row.axis}</th>
-                {cols.map((c) => (
-                  <td class="px-5 py-4 text-gray-700">{row[c.key]}</td>
+                {content.columns.map((_, col) => (
+                  <td class="px-5 py-4 text-gray-700">{row.values[col] ?? ''}</td>
                 ))}
               </tr>
             ))

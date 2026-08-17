@@ -1,11 +1,12 @@
 ---
+import type { SectionHeadingContent } from '../config/schema';
+
 interface Props {
-  label: string;
-  title: string;
-  lead?: string;
+  content: SectionHeadingContent;
   align?: 'left' | 'center';
 }
-const { label, title, lead, align = 'left' } = Astro.props;
+const { content, align = 'left' } = Astro.props;
+const { label, title, lead } = content;
 ---
 
 <div class:list={['max-w-3xl', align === 'center' && 'mx-auto text-center']}>

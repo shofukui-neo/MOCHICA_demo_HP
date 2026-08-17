@@ -1,15 +1,21 @@
 ---
 import SectionHeading from './SectionHeading.astro';
-import { REQUIREMENTS } from '../data/site';
+import type { RequirementsContent } from '../config/schema';
+
+interface Props {
+  content: RequirementsContent;
+}
+
+const { content } = Astro.props;
 ---
 
-<section id="requirements" class="bg-surface-muted py-20 md:py-28">
+<section id={content.id} class="bg-surface-muted py-20 md:py-28">
   <div class="shell">
-    <SectionHeading label="03 — Requirements" title="募集要項" />
+    <SectionHeading content={content.heading} />
 
     <dl class="mt-12 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
       {
-        REQUIREMENTS.map((r, i) => (
+        content.items.map((r, i) => (
           <div
             class:list={[
               'grid gap-1 px-6 py-5 sm:grid-cols-[200px_1fr] sm:gap-6 sm:px-8',
@@ -23,8 +29,6 @@ import { REQUIREMENTS } from '../data/site';
       }
     </dl>
 
-    <p class="mt-5 text-xs text-gray-500">
-      ※ 本ページはデモサイトです。実際の募集内容は公式採用ページをご確認ください。
-    </p>
+    {content.note && <p class="mt-5 text-xs text-gray-500">{content.note}</p>}
   </div>
 </section>

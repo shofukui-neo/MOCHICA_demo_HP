@@ -1,26 +1,33 @@
 ---
 import SectionHeading from './SectionHeading.astro';
-import { SELECTION_FLOW } from '../data/site';
+import type { SelectionFlowContent } from '../config/schema';
+
+interface Props {
+  content: SelectionFlowContent;
+}
+
+const { content } = Astro.props;
+// 5ステップまでは1行に収め、それ以上は折り返す
+const columns = Math.min(content.steps.length, 5);
 ---
 
-<section id="flow" class="bg-white py-20 md:py-28">
+<section id={content.id} class="bg-white py-20 md:py-28">
   <div class="shell">
-    <SectionHeading
-      label="02 — Flow"
-      title="エントリーから内定まで"
-      lead="エントリーから内定まで、平均で3〜4週間程度。遠方の方は全プロセスをオンラインで完結できます。"
-    />
+    <SectionHeading content={content.heading} />
 
-    <ol class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+    <ol
+      class="mt-14 grid gap-5 sm:grid-cols-2"
+      style={`--flow-columns:${columns}`}
+    >
       {
-        SELECTION_FLOW.map((s, i) => (
+        content.steps.map((s, i) => (
           <li class="relative">
             <div class="card-lift h-full p-6">
               <span class="text-2xl font-black text-brand-blue-light">{s.step}</span>
               <h3 class="mt-1 text-sm font-bold text-ink">{s.title}</h3>
               <p class="mt-2 text-[12px] leading-relaxed text-gray-600">{s.body}</p>
             </div>
-            {i < SELECTION_FLOW.length - 1 && (
+            {i < content.steps.length - 1 && (
               <span class="absolute -right-3.5 top-1/2 hidden -translate-y-1/2 text-gray-300 lg:block">
                 ▶
               </span>
@@ -31,3 +38,11 @@ import { SELECTION_FLOW } from '../data/site';
     </ol>
   </div>
 </section>
+
+<style>
+  @media (min-width: 1024px) {
+    ol {
+      grid-template-columns: repeat(var(--flow-columns), minmax(0, 1fr));
+    }
+  }
+</style>

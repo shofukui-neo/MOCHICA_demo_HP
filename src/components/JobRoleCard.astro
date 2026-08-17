@@ -1,44 +1,28 @@
 ---
+import { accentBg, accentChip, accentText } from '../config';
+import type { JobRolesContent } from '../config/schema';
+
 interface Props {
-  role: {
-    no: string;
-    title: string;
-    en: string;
-    accent: string;
-    image: string;
-    catch: string;
-    body: string;
-    day: readonly { time: string; text: string }[];
-    fit: readonly string[];
-  };
+  role: JobRolesContent['items'][number];
+  /** 「1日の流れ」ブロックの見出し */
+  dayLabel: string;
+  /** 「向いている人」ブロックの見出し */
+  fitLabel: string;
+  /** true で画像を右側に配置（交互レイアウト用） */
   flip?: boolean;
 }
-const { role, flip = false } = Astro.props;
-
-const accentText: Record<string, string> = {
-  blue: 'text-brand-blue',
-  purple: 'text-brand-purple',
-  pink: 'text-brand-pink',
-  orange: 'text-brand-orange',
-};
-const accentBg: Record<string, string> = {
-  blue: 'bg-brand-blue',
-  purple: 'bg-brand-purple',
-  pink: 'bg-brand-pink',
-  orange: 'bg-brand-orange',
-};
-const accentSoft: Record<string, string> = {
-  blue: 'bg-brand-blue-light text-brand-blue',
-  purple: 'bg-brand-purple-light text-brand-purple',
-  pink: 'bg-brand-pink-light text-brand-pink',
-  orange: 'bg-brand-orange-light text-brand-orange',
-};
+const { role, dayLabel, fitLabel, flip = false } = Astro.props;
 ---
 
 <article class="card-lift overflow-hidden">
   <div class="grid md:grid-cols-2">
-    <div class:list={['media-frame aspect-[4/3] rounded-none md:aspect-auto md:min-h-[380px]', flip && 'md:order-2']}>
-      <img src={role.image} alt={`${role.title}の仕事風景`} loading="lazy" decoding="async" />
+    <div
+      class:list={[
+        'media-frame aspect-[4/3] rounded-none md:aspect-auto md:min-h-[380px]',
+        flip && 'md:order-2',
+      ]}
+    >
+      <img src={role.image.src} alt={role.image.alt} loading="lazy" decoding="async" />
       <span
         class={`absolute left-5 top-5 rounded-full px-3 py-1 text-[11px] font-black tracking-widest text-white ${accentBg[role.accent]}`}
       >
@@ -52,34 +36,38 @@ const accentSoft: Record<string, string> = {
       <p class={`mt-3 text-sm font-bold ${accentText[role.accent]}`}>{role.catch}</p>
       <p class="mt-4 text-sm leading-relaxed text-gray-600">{role.body}</p>
 
-      <div class="mt-7 rounded-xl bg-surface-muted p-5">
-        <p class="text-[10px] font-bold tracking-[0.2em] text-gray-500">A DAY IN THE LIFE</p>
-        <ul class="mt-3 space-y-2.5">
-          {
-            role.day.map((d) => (
-              <li class="flex gap-3 text-sm">
-                <span class={`shrink-0 font-mono text-xs font-bold ${accentText[role.accent]}`}>
-                  {d.time}
-                </span>
-                <span class="text-gray-700">{d.text}</span>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
+      {
+        role.day.length > 0 && (
+          <div class="mt-7 rounded-xl bg-surface-muted p-5">
+            <p class="text-[10px] font-bold tracking-[0.2em] text-gray-500">{dayLabel}</p>
+            <ul class="mt-3 space-y-2.5">
+              {role.day.map((d) => (
+                <li class="flex gap-3 text-sm">
+                  <span class={`shrink-0 font-mono text-xs font-bold ${accentText[role.accent]}`}>
+                    {d.time}
+                  </span>
+                  <span class="text-gray-700">{d.text}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
 
-      <div class="mt-5">
-        <p class="text-[10px] font-bold tracking-[0.2em] text-gray-500">こんな人に向いています</p>
-        <ul class="mt-2.5 flex flex-wrap gap-2">
-          {
-            role.fit.map((f) => (
-              <li class={`rounded-full px-3 py-1 text-[11px] font-bold ${accentSoft[role.accent]}`}>
-                {f}
-              </li>
-            ))
-          }
-        </ul>
-      </div>
+      {
+        role.fit.length > 0 && (
+          <div class="mt-5">
+            <p class="text-[10px] font-bold tracking-[0.2em] text-gray-500">{fitLabel}</p>
+            <ul class="mt-2.5 flex flex-wrap gap-2">
+              {role.fit.map((f) => (
+                <li class={`rounded-full px-3 py-1 text-[11px] font-bold ${accentChip[role.accent]}`}>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
     </div>
   </div>
 </article>

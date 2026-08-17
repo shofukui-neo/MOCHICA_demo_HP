@@ -1,61 +1,27 @@
 ---
+/**
+ * 人を知る（people サイト）。
+ * 文言・画像は一切ここには書かない。すべて src/config/site.config.ts の pages.people から供給される。
+ * セクションを config から消せば、そのブロックは出力されない。
+ */
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
-import SectionHeading from '../components/SectionHeading.astro';
 import ValuesSection from '../components/ValuesSection.astro';
-import EmployeeCard from '../components/EmployeeCard.astro';
-import EmployeeMiniCard from '../components/EmployeeMiniCard.astro';
+import InterviewSection from '../components/InterviewSection.astro';
 import CareerPath from '../components/CareerPath.astro';
 import EntryCTA from '../components/EntryCTA.astro';
-import { IMAGES, EMPLOYEES, MINI_EMPLOYEES } from '../data/site';
+import { getPage, siteConfig } from '../config';
+
+const page = getPage('people');
+const entry = page.entry ?? siteConfig.entry;
 ---
 
-<Layout
-  title="人を知る"
-  description="ネオキャリアの7VALUESと、実際に働く社員のインタビュー。入社理由からキャリアパスまで、リアルな声を紹介します。"
-  siteId="people"
-  ogImage={IMAGES.heroPeople}
->
-  <PageHero
-    eyebrow="PEOPLE — 人を知る"
-    titleLines={['どんな人と、', '働くことになるのか。']}
-    lead="制度やスローガンよりも、隣に座る人がどんな価値観で動いているか。ネオキャリアの“人”を、できるだけ加工せずに見せます。"
-    image={IMAGES.heroPeople}
-    imageAlt="ネオキャリアの社員たち"
-    primary={{ label: '先輩の話を読む', href: '#interview' }}
-    secondary={{ label: 'エントリーする', href: '#entry' }}
-    stats={[
-      { value: '7', label: 'VALUES' },
-      { value: '31.0歳', label: '平均年齢' },
-      { value: '2年目〜', label: 'リーダー登用例' },
-      { value: '100', label: '2030年 新規事業目標' },
-    ]}
-    accent="var(--color-brand-purple)"
-  />
+<Layout meta={page.meta} siteId="people">
+  <PageHero content={page.hero} />
 
-  <ValuesSection />
+  {page.values && <ValuesSection content={page.values} />}
+  {page.interview && <InterviewSection content={page.interview} />}
+  {page.careerPath && <CareerPath content={page.careerPath} />}
 
-  <section id="interview" class="bg-surface py-20 md:py-28">
-    <div class="shell">
-      <SectionHeading
-        label="03 — Interview"
-        title="先輩社員の、加工しない話"
-        lead="入社理由、やりがい、これから。良いことばかりではない部分も含めて聞きました。"
-      />
-
-      <div class="mt-14 space-y-10">
-        {EMPLOYEES.map((employee) => <EmployeeCard employee={employee} />)}
-      </div>
-
-      <div class="mt-14">
-        <p class="text-[11px] font-black tracking-[0.25em] text-gray-400">OTHER MEMBERS</p>
-        <div class="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {MINI_EMPLOYEES.map((employee) => <EmployeeMiniCard employee={employee} />)}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <CareerPath />
-  <EntryCTA />
+  <EntryCTA content={entry} />
 </Layout>

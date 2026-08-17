@@ -1,0 +1,30 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import JobRoleCard from './JobRoleCard.astro';
+import type { JobRolesContent } from '../config/schema';
+
+interface Props {
+  content: JobRolesContent;
+}
+
+const { content } = Astro.props;
+---
+
+<section id={content.id} class="bg-white py-20 md:py-28">
+  <div class="shell">
+    <SectionHeading content={content.heading} />
+
+    <div class="mt-14 space-y-8">
+      {
+        content.items.map((role, i) => (
+          <JobRoleCard
+            role={role}
+            dayLabel={content.dayLabel}
+            fitLabel={content.fitLabel}
+            flip={i % 2 === 1}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>

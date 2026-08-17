@@ -1,0 +1,593 @@
+/**
+ * ★ このファイルだけを書き換えれば、3サイトの文言・画像・配色がすべて入れ替わる。
+ *
+ * ページ（src/pages/）とコンポーネント（src/components/）には
+ * 文言も画像URLも一切書かれていないので、レイアウトやCSSに触れる必要はない。
+ *
+ * ・型定義と各項目の意味は src/config/schema.ts を参照
+ * ・書き換え手順は docs/content-guide.md を参照
+ * ・白紙のひな形は src/config/starter.config.ts をコピーして使う
+ *
+ * 省略可能な項目（?付き）を消すと、そのブロックごと出力されなくなる。
+ * 例: pages.jobs.comparison を丸ごと消せば職種比較表のセクションが消える。
+ */
+import type { SiteConfig } from './schema';
+
+/**
+ * 画像はここに集約してから各セクションで参照する（同じ画像を使い回すため）。
+ *
+ * 現在は neo-career.co.jp の公開画像を直リンクしている。
+ * 自社画像に差し替える場合は public/images/ に置き、
+ * '/images/hero-jobs.jpg' のような絶対パスに書き換える。
+ */
+const images = {
+  heroJobs: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-1-1-scaled.jpg',
+  heroPeople: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-3-2-scaled.jpg',
+  heroFaq: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-5-1-scaled.jpg',
+  statement: 'https://www.neo-career.co.jp/wp-content/uploads/2024/02/statement-hero-header-bg-scaled.jpg',
+  career: 'https://www.neo-career.co.jp/wp-content/uploads/2024/02/home-career-img-1.png',
+  office: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-7-1-scaled.jpg',
+  team: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-6-2-scaled.jpg',
+  meeting: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-2-2-scaled.jpg',
+  field: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-4-1-scaled.jpg',
+  future: 'https://www.neo-career.co.jp/wp-content/uploads/2024/01/home-hero-slide-10-1-scaled.jpg',
+  bizRecruit: 'https://www.neo-career.co.jp/wp-content/uploads/2024/02/home-business-1.png',
+  bizWork: 'https://www.neo-career.co.jp/wp-content/uploads/2024/02/home-business-2.png',
+  bizOps: 'https://www.neo-career.co.jp/wp-content/uploads/2024/02/home-business-3.png',
+  logo: 'https://www.neo-career.co.jp/wp-content/uploads/2023/12/cropped-neo-career-icon-270x270.png',
+};
+
+export const siteConfig: SiteConfig = {
+  /* ========================================================
+   * ブランド情報
+   * ====================================================== */
+  brand: {
+    name: 'NEO CAREER',
+    company: '株式会社ネオキャリア',
+    year: '2027',
+    purpose: '人と本気で向き合い、未来を切り拓く。',
+    logo: { src: images.logo, alt: '' },
+    address: {
+      postalCode: '160-0023',
+      region: '東京都',
+      locality: '新宿区',
+      street: '西新宿1-22-2 新宿サンエービル',
+      country: 'JP',
+    },
+  },
+
+  /* ========================================================
+   * 配色・フォント
+   * ====================================================== */
+  theme: {
+    colors: {
+      primary: '#1a5fd0',
+      primaryDark: '#123f8c',
+      primaryLight: '#e5efff',
+      deep: '#0a1f3d',
+      green: '#0f9e5e',
+      greenLight: '#dcfce7',
+      purple: '#6d3aed',
+      purpleLight: '#ede9fe',
+      pink: '#d61f6e',
+      pinkLight: '#fce7f3',
+      orange: '#e0640c',
+      orangeLight: '#ffedd5',
+      surface: '#fbfbf9',
+      surfaceMuted: '#f3f4f6',
+      ink: '#0f172a',
+    },
+    fontFamily: '"Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif',
+    fontUrl: 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap',
+    preconnect: ['https://www.neo-career.co.jp'],
+  },
+
+  /* ========================================================
+   * メタ情報
+   * ====================================================== */
+  meta: {
+    lang: 'ja',
+    titleTemplate: '{title} | {company} {year}年新卒採用',
+    siteName: '株式会社ネオキャリア 新卒採用',
+    skipLinkLabel: '本文へスキップ',
+  },
+
+  /**
+   * 3サイトの配信オリジン。
+   * Cloudflare Pages のプロジェクト名とURLは必ず一致させること
+   * （pages.dev のサブドメインはプロジェクト名から決まる）。
+   * 独自ドメインなら 'https://jobs.example.com' のように書き換える。
+   */
+  origins: {
+    jobs: 'https://mochica-jobs.pages.dev',
+    people: 'https://mochica-people.pages.dev',
+    faq: 'https://mochica-faq.pages.dev',
+  },
+
+  /* ========================================================
+   * ヘッダー・フッター（3サイト共通）
+   * ====================================================== */
+  header: {
+    brandName: 'NEO CAREER',
+    brandSub: '2027 NEW GRADUATE',
+    homeHref: '/',
+    homeAriaLabel: 'NEO CAREER トップへ',
+    cta: { label: 'エントリー', href: '#entry' },
+  },
+
+  footer: {
+    links: [
+      { label: 'コーポレートサイト ↗', href: 'https://www.neo-career.co.jp/', external: true },
+    ],
+    notes: [
+      '本サイトは MOCHICA 採用LPデモです。掲載内容の一部は公開情報および想定サンプルを含みます。',
+    ],
+    copyright: '© neo career',
+  },
+
+  /* ========================================================
+   * エントリーセクション（3サイト共通・末尾に配置）
+   * ====================================================== */
+  entry: {
+    id: 'entry',
+    label: 'Entry',
+    titleLines: ['迷っているなら、', 'まず話を聞きに来てください。'],
+    lead: 'エントリーは1分で完了します。説明会はオンライン開催もあり、選考に進むかどうかはその後で決めていただいて構いません。',
+    image: { src: images.future, alt: '' },
+    primary: { label: 'エントリーする', href: '#entry-form' },
+    secondary: { label: '説明会を予約する', href: '#entry-form' },
+    form: {
+      badge: 'DEMO FORM',
+      note: '本デモではフォーム送信は行われません。実運用ではMOCHICAのエントリーフォームに接続します。',
+      // action を指定すると実際に送信できるフォームになる（未指定なら入力不可のデモ表示）
+      fields: [
+        { label: 'お名前', name: 'name', type: 'text', placeholder: 'ネオ 太郎', required: true },
+        { label: 'メールアドレス', name: 'email', type: 'email', placeholder: 'taro@example.com', required: true },
+      ],
+      submitLabel: '送信（デモのため無効）',
+    },
+  },
+
+  /* ========================================================
+   * ページごとの中身
+   * ====================================================== */
+  pages: {
+    /* ------------------------------------------------------
+     * 仕事を知る
+     * ---------------------------------------------------- */
+    jobs: {
+      meta: {
+        title: '仕事を知る',
+        description:
+          'ネオキャリアの3つの事業領域と、法人営業・キャリアアドバイザー・企画/マーケティング・新規事業/HR Techの4職種を紹介します。',
+        ogImage: images.heroJobs,
+      },
+
+      hero: {
+        eyebrow: 'JOBS — 仕事を知る',
+        titleLines: ['人の可能性を、', '事業で広げる。'],
+        lead: 'ネオキャリアは人材ビジネスを軸に、採用支援・就労支援・業務支援の3領域を展開しています。まずは「どんな事業で、どんな職種があるか」から。',
+        image: { src: images.heroJobs, alt: 'ネオキャリアで働く社員' },
+        primary: { label: '4つの職種を見る', href: '#jobs' },
+        secondary: { label: 'エントリーする', href: '#entry' },
+        stats: [
+          { value: '3領域', label: '事業ドメイン' },
+          { value: '4職種', label: '新卒募集' },
+          { value: '60拠点超', label: '全国ネットワーク' },
+          { value: '200+', label: '取扱求人メディア' },
+        ],
+        accent: 'blue',
+      },
+
+      business: {
+        id: 'business',
+        heading: {
+          label: '01 — Business',
+          title: '結局、何をやっている会社？',
+          lead: 'ネオキャリアは「採用支援」「就労支援」「業務支援」の3領域で事業を展開しています。人材ビジネスを軸にしながら、施設運営やシステム開発まで自社で手がけているのが特徴です。',
+        },
+        items: [
+          {
+            no: '01',
+            title: '採用支援',
+            en: 'Recruitment',
+            image: { src: images.bizRecruit, alt: '採用支援のイメージ' },
+            accent: 'blue',
+            description:
+              '新卒・中途・アルバイト・人材派遣まで、あらゆる採用ニーズに多彩なソリューションで応える。採用代行(RPO)まで含めた一気通貫の支援が強み。',
+            tags: ['求人メディア200種以上', 'RPO', '採用コンサルティング'],
+          },
+          {
+            no: '02',
+            title: '就労支援',
+            en: 'Career Support',
+            image: { src: images.bizWork, alt: '就労支援のイメージ' },
+            accent: 'green',
+            description:
+              '初めての就職活動から転職活動まで、一人ひとりに寄り添う。就職エージェントneo・第二新卒エージェントneoなど自社メディアを多数運営。',
+            tags: ['新卒紹介', '第二新卒', '専門職就労支援'],
+          },
+          {
+            no: '03',
+            title: '業務支援',
+            en: 'Business Support',
+            image: { src: images.bizOps, alt: '業務支援のイメージ' },
+            accent: 'orange',
+            description:
+              '営業代行・コールセンター代行・システム開発など専門性の高い業務を代行。保育所・学童保育室・介護施設の運営まで自社で手がける。',
+            tags: ['BPO', 'システム開発', '施設運営'],
+          },
+        ],
+        note: '200以上の求人メディアを取り扱い、全国60拠点以上のネットワークで採用課題に応えています。',
+      },
+
+      numbers: {
+        id: 'numbers',
+        heading: {
+          label: '02 — Numbers',
+          title: '数字で見るネオキャリア',
+          lead: '2000年の創業から25年。人材ビジネスを軸に、事業領域も拠点も広げてきました。',
+        },
+        facts: [
+          { value: '2000', unit: '年', label: '創業', note: '2000年11月15日設立' },
+          { value: '3,486', unit: '名', label: '従業員数', note: 'グループ連結' },
+          { value: '524', unit: '億円', label: '売上高', note: '直近実績' },
+          { value: '60', unit: '拠点超', label: '全国ネットワーク', note: '北海道〜沖縄' },
+        ],
+        image: { src: images.office, alt: 'ネオキャリアのオフィス' },
+      },
+
+      jobRoles: {
+        id: 'jobs',
+        heading: {
+          label: '03 — Job Roles',
+          title: '4つの職種、4つの未来',
+          lead: '同じ会社でも、向き合う相手も成果の測り方も違います。それぞれの「1日の流れ」まで書いたので、自分が動いている姿を想像してみてください。',
+        },
+        dayLabel: 'A DAY IN THE LIFE',
+        fitLabel: 'こんな人に向いています',
+        items: [
+          {
+            no: '01',
+            title: '法人営業',
+            en: 'B2B Sales',
+            accent: 'blue',
+            image: { src: images.meeting, alt: '法人営業の仕事風景' },
+            catch: '企業の採用課題を、根っこから解く。',
+            body: '経営者や人事責任者と直接向き合い、採用の課題をヒアリング。求人メディア・人材紹介・RPO・HR Techを組み合わせた最適解を設計して提案する。',
+            day: [
+              { time: '09:30', text: 'チーム朝会・当日の商談準備' },
+              { time: '11:00', text: '既存クライアントへ運用report・追加提案' },
+              { time: '14:00', text: '新規商談（採用課題ヒアリング）' },
+              { time: '17:00', text: '提案資料作成・SFA入力' },
+            ],
+            fit: ['人と話すのが好き', '数字で成果を測りたい', '経営層と早く仕事がしたい'],
+          },
+          {
+            no: '02',
+            title: 'キャリアアドバイザー',
+            en: 'Career Advisor',
+            accent: 'purple',
+            image: { src: images.field, alt: 'キャリアアドバイザーの仕事風景' },
+            catch: '一人の人生の、分岐点に立ち会う。',
+            body: '求職者との面談を通じてキャリアプランを一緒に設計。求人紹介から面接対策、内定承諾まで伴走する。人の意思決定に深く関わる仕事。',
+            day: [
+              { time: '10:00', text: '面談前の求人リサーチ' },
+              { time: '11:00', text: '初回キャリア面談' },
+              { time: '15:00', text: '選考対策・面接フィードバック' },
+              { time: '18:00', text: '内定承諾フォロー・進捗管理' },
+            ],
+            fit: ['人の話を聴くのが得意', '相手の変化にやりがいを感じる', '長期の関係を築きたい'],
+          },
+          {
+            no: '03',
+            title: '企画 / マーケティング',
+            en: 'Planning & Marketing',
+            accent: 'pink',
+            image: { src: images.team, alt: '企画・マーケティングの仕事風景' },
+            catch: '個の勝ち筋を、組織の型にする。',
+            body: '自社メディアの集客設計、リード獲得施策、営業組織の生産性改善までを担う。データを見て打ち手を決め、仕組みに落とす役割。',
+            day: [
+              { time: '10:00', text: '流入・CVデータの分析' },
+              { time: '13:00', text: '施策企画のブレスト' },
+              { time: '16:00', text: 'LP改善・クリエイティブ確認' },
+            ],
+            fit: ['数字を分解するのが好き', '仕組み化に興味がある', '裏側から事業を動かしたい'],
+          },
+          {
+            no: '04',
+            title: '新規事業 / HR Tech',
+            en: 'New Business & HR Tech',
+            accent: 'orange',
+            image: { src: images.future, alt: '新規事業・HR Techの仕事風景' },
+            catch: '人の力を、テクノロジーで加速させる。',
+            body: '採用管理システムMOCHICAをはじめとするHR Techプロダクトの企画・グロースを担当。2030年までに新規事業100創出を掲げる領域の中核。',
+            day: [
+              { time: '10:00', text: 'プロダクトの利用データ確認' },
+              { time: '13:00', text: '開発チームとの仕様すり合わせ' },
+              { time: '16:00', text: '導入企業へのヒアリング' },
+            ],
+            fit: ['0→1に関わりたい', 'プロダクトに興味がある', '不確実性を楽しめる'],
+          },
+        ],
+      },
+
+      comparison: {
+        id: 'compare',
+        heading: {
+          label: '03 — Compare',
+          title: '4職種を、横に並べて比べる',
+          lead: 'どれが正解ということはありません。自分がどの軸に惹かれるかで選んでください。',
+        },
+        axisLabel: '比較軸',
+        columns: [
+          { label: '法人営業', accent: 'blue' },
+          { label: 'キャリアアドバイザー', accent: 'purple' },
+          { label: '企画/マーケ', accent: 'pink' },
+          { label: '新規事業/HR Tech', accent: 'orange' },
+        ],
+        rows: [
+          { axis: '向き合う相手', values: ['企業の経営者・人事', '求職者本人', '市場・データ', 'プロダクト利用企業'] },
+          { axis: '成果の測り方', values: ['受注 / 売上', '内定・入社決定数', 'リード数 / CVR', '導入社数 / 継続率'] },
+          { axis: '1日の会話量', values: ['多い', '非常に多い', '中程度', '中程度'] },
+          { axis: '数字とのつきあい', values: ['毎日追う', '週次で追う', '分析が主業務', '中長期で追う'] },
+          { axis: '成果が出るまで', values: ['数週間〜数ヶ月', '数週間〜半年', '数ヶ月', '半年〜数年'] },
+        ],
+      },
+    },
+
+    /* ------------------------------------------------------
+     * 人を知る
+     * ---------------------------------------------------- */
+    people: {
+      meta: {
+        title: '人を知る',
+        description:
+          'ネオキャリアの7VALUESと、実際に働く社員のインタビュー。入社理由からキャリアパスまで、リアルな声を紹介します。',
+        ogImage: images.heroPeople,
+      },
+
+      hero: {
+        eyebrow: 'PEOPLE — 人を知る',
+        titleLines: ['どんな人と、', '働くことになるのか。'],
+        lead: '制度やスローガンよりも、隣に座る人がどんな価値観で動いているか。ネオキャリアの“人”を、できるだけ加工せずに見せます。',
+        image: { src: images.heroPeople, alt: 'ネオキャリアの社員たち' },
+        primary: { label: '先輩の話を読む', href: '#interview' },
+        secondary: { label: 'エントリーする', href: '#entry' },
+        stats: [
+          { value: '7', label: 'VALUES' },
+          { value: '31.0歳', label: '平均年齢' },
+          { value: '2年目〜', label: 'リーダー登用例' },
+          { value: '100', label: '2030年 新規事業目標' },
+        ],
+        accent: 'purple',
+      },
+
+      values: {
+        id: 'values',
+        label: '02 — Purpose',
+        title: '人と本気で向き合い、未来を切り拓く。',
+        lead: '私たちが描く未来は、誰もが主体的に、いきいきと働ける社会。次世代が前向きに生きられる社会。そのために、一人ひとりに本気で向き合い、人の力をテクノロジーで加速させます。',
+        image: { src: images.statement, alt: '' },
+        itemsLabel: '7 VALUES',
+        items: [
+          { no: '01', title: 'ぜんぶ自分ゴト化', body: '全てのコトに対して、強いオーナーシップをもって取り組もう。' },
+          { no: '02', title: '真摯さを貫こう', body: '一貫性、公平性、誠実さ、高い倫理観を持とう。' },
+          { no: '03', title: 'プロのこだわりを', body: '自信、誇り、謙虚さ、利他、スピード、クオリティ。プロとしての基準を高め、期待を超えよう。' },
+          { no: '04', title: '楽しむが、ど真ん中', body: '笑顔を絶やさず、明元素感を大切に。周りに活力を届ける存在でいよう。' },
+          { no: '05', title: '大胆に挑み、成し遂げる', body: '未来に対して大胆に挑戦し続けることがカッコいい。挑戦したことを大いに称えよう。' },
+          { no: '06', title: 'お客さまのために、社会のために', body: '強い使命感と情熱をもって、目の前のお客さまとその先にある社会に感動を届けよう。' },
+          { no: '07', title: '想像から創造へ', body: 'もっと良くするために何ができるか？を想像し、未来の当たり前を創造しよう。' },
+        ],
+        closingLines: ['この7つに', 'ピンと来たなら、', 'たぶん合います。'],
+      },
+
+      interview: {
+        id: 'interview',
+        heading: {
+          label: '03 — Interview',
+          title: '先輩社員の、加工しない話',
+          lead: '入社理由、やりがい、これから。良いことばかりではない部分も含めて聞きました。',
+        },
+        joinedSuffix: '年入社',
+        episodeLabel: 'EPISODE',
+        employees: [
+          {
+            name: '田中 花子',
+            department: '法人営業部',
+            joined: '2021',
+            accent: 'blue',
+            image: { src: images.meeting, alt: '法人営業部 田中 花子' },
+            headline: '入社2年目でチームリーダーへ。数字より“人”を大切にした営業スタイル',
+            timeline: [
+              { year: '2021', label: '入社・法人営業配属' },
+              { year: '2022', label: 'チームリーダー' },
+              { year: '2024', label: 'グループマネージャー' },
+            ],
+            sections: [
+              {
+                title: '入社理由',
+                content:
+                  '「人のキャリアを支援する」というミッションに共感しました。自分自身も進路で悩んだ経験があり、同じように悩む人の力になりたいと思い入社を決めました。',
+              },
+              {
+                title: '仕事内容とやりがい',
+                content:
+                  '法人クライアントの採用課題をヒアリングし、最適なソリューションを提案しています。提案が受注に繋がり、実際に採用が動き出した時の達成感は何物にも代えがたいです。',
+              },
+              {
+                title: 'これからのビジョン',
+                content:
+                  'マネージャーとして後輩育成にも力を入れたい。個人の数字ではなく、チーム全体で成果を出せるリーダーになりたいです。',
+              },
+              {
+                title: '好きなところ',
+                content:
+                  'フラットな文化で、若手でも意見が通る。失敗を恐れずチャレンジできる環境が一番の魅力です。',
+              },
+            ],
+            episode:
+              '入社1年目、初めて自分だけで大型案件を受注。クライアントから「田中さんの提案で採用が変わった」と言われた瞬間、この仕事の意味を実感しました。',
+          },
+          {
+            name: '佐藤 健太',
+            department: 'キャリアアドバイザー部',
+            joined: '2020',
+            accent: 'purple',
+            image: { src: images.field, alt: 'キャリアアドバイザー部 佐藤 健太' },
+            headline: '求職者の人生に関わる仕事。1件1件に全力で向き合う',
+            timeline: [
+              { year: '2020', label: '入社・CA配属' },
+              { year: '2022', label: '全社MVP受賞' },
+              { year: '2023', label: '主任' },
+            ],
+            sections: [
+              {
+                title: '入社理由',
+                content:
+                  '大学時代に就活支援のボランティアをしていた経験から、人のキャリア支援を仕事にしたいと考えていました。',
+              },
+              {
+                title: '仕事内容とやりがい',
+                content:
+                  '転職希望者との面談を通じて、キャリアプランの設計から内定獲得まで伴走します。内定承諾の連絡をもらう瞬間が最高です。',
+              },
+              {
+                title: 'これからのビジョン',
+                content:
+                  'キャリアコンサルタント資格を取得し、より専門性の高い支援ができるようスキルアップ中です。',
+              },
+              {
+                title: '好きなところ',
+                content:
+                  '数字だけでなく求職者の満足度も評価に入る点。本質的な支援が評価される文化に共感しています。',
+              },
+            ],
+            episode:
+              '3年間伴走した求職者から、転職先での昇進報告とお礼の手紙が届きました。「佐藤さんのおかげで人生が変わった」という言葉は今も宝物です。',
+          },
+        ],
+        othersLabel: 'OTHER MEMBERS',
+        others: [
+          { name: '山田 美咲', initials: 'Y.M', headline: '3年目で新規事業を立ち上げ', joined: '2022', department: '新規事業開発部', accent: 'green' },
+          { name: '鈴木 大輔', initials: 'S.D', headline: 'データ分析で採用DXを推進', joined: '2023', department: 'HR Tech部', accent: 'blue' },
+          { name: '伊藤 さくら', initials: 'I.S', headline: 'ヘルスケア事業の立ち上げメンバー', joined: '2022', department: 'ヘルスケア事業部', accent: 'pink' },
+          { name: '渡辺 翔', initials: 'W.S', headline: '入社1年目でMVP受賞', joined: '2024', department: '法人営業部', accent: 'purple' },
+        ],
+      },
+
+      careerPath: {
+        id: 'career',
+        heading: {
+          label: '04 — Career Path',
+          title: '入社してからの、現実的な話',
+          lead: 'いきなり大きな裁量を渡されるわけではありません。基礎を固めて、任される範囲が広がっていく。その順番を正直に書きます。',
+        },
+        steps: [
+          { phase: '1年目', title: '徹底的に基礎を作る', body: '3ヶ月の新人研修後に配属。OJTトレーナーが付き、商談同行から始めて独り立ちを目指す。' },
+          { phase: '2〜3年目', title: '裁量を持って動く', body: '担当クライアントを持ち、数字責任を負う。早い人はこのフェーズでリーダーに抜擢される。' },
+          { phase: '4年目〜', title: '選択肢が広がる', body: 'マネジメント / スペシャリスト / 新規事業。社内公募制度で手を挙げれば領域を越えた挑戦も可能。' },
+        ],
+        image: { src: images.career, alt: 'ネオキャリアで働く社員' },
+      },
+    },
+
+    /* ------------------------------------------------------
+     * 選考を知る
+     * ---------------------------------------------------- */
+    faq: {
+      meta: {
+        title: '選考を知る',
+        description:
+          'ネオキャリア2027年新卒採用の選考フロー・募集要項・よくある質問。エントリーはこのページから。',
+        ogImage: images.heroFaq,
+      },
+
+      hero: {
+        eyebrow: 'ENTRY — 選考を知る',
+        titleLines: ['不安を、', '全部つぶしてから。'],
+        lead: '選考の流れ、募集要項、そして聞きにくい質問への回答。判断に必要な情報を、この1ページに集めました。',
+        image: { src: images.heroFaq, alt: 'ネオキャリアの選考風景' },
+        primary: { label: 'エントリーする', href: '#entry' },
+        secondary: { label: '募集要項を見る', href: '#requirements' },
+        stats: [
+          { value: '通年', label: 'エントリー受付' },
+          { value: '3〜4週間', label: '内定までの平均' },
+          { value: 'オンライン可', label: '全選考プロセス' },
+          { value: '文理不問', label: '応募資格' },
+        ],
+        accent: 'orange',
+      },
+
+      flow: {
+        id: 'flow',
+        heading: {
+          label: '02 — Flow',
+          title: 'エントリーから内定まで',
+          lead: 'エントリーから内定まで、平均で3〜4週間程度。遠方の方は全プロセスをオンラインで完結できます。',
+        },
+        steps: [
+          { step: '01', title: 'エントリー', body: '本サイトのフォームから1分で完了。' },
+          { step: '02', title: '会社説明会', body: '事業・カルチャー・キャリアの全体像を共有。オンライン可。' },
+          { step: '03', title: '面接（複数回）', body: '価値観と志向のすり合わせ。現場社員との対話も。' },
+          { step: '04', title: '最終面接', body: '役員との面接。相互理解を最終確認。' },
+          { step: '05', title: '内定', body: '内定後は配属面談・内定者交流会を実施。' },
+        ],
+      },
+
+      requirements: {
+        id: 'requirements',
+        heading: { label: '03 — Requirements', title: '募集要項' },
+        items: [
+          { label: '募集職種', value: '法人営業 / キャリアアドバイザー / 企画・マーケティング / 新規事業・HR Tech' },
+          { label: '応募資格', value: '2027年3月までに国内外の大学・大学院・高専・専門学校を卒業（修了）見込みの方' },
+          { label: '勤務地', value: '新宿本社（東京都新宿区西新宿1-22-2 新宿サンエービル）ほか全国60拠点以上' },
+          { label: '勤務時間', value: '9:30〜18:30（実働8時間 / 休憩1時間）※部署により異なる' },
+          { label: '休日休暇', value: '完全週休2日制（土日）、祝日、年末年始、年次有給休暇、慶弔休暇、産前産後・育児休暇' },
+          { label: '待遇・福利厚生', value: '各種社会保険完備、交通費支給、資格取得支援、社内公募制度、表彰制度、健康診断' },
+          { label: '選考プロセス', value: 'エントリー → 説明会 → 面接（複数回） → 最終面接 → 内定' },
+        ],
+        note: '※ 本ページはデモサイトです。実際の募集内容は公式採用ページをご確認ください。',
+      },
+
+      faq: {
+        id: 'faq',
+        heading: {
+          label: '04 — FAQ',
+          title: '聞きにくいことも、全部答えます',
+          lead: '説明会で実際によく出る質問をまとめました。ここに無いことは、面談で遠慮なく聞いてください。',
+        },
+        questionPrefix: 'Q.',
+        answerPrefix: 'A.',
+        groups: [
+          {
+            category: '選考について',
+            items: [
+              { q: '選考はいつから始まりますか？', a: '通年でエントリーを受け付けています。説明会参加後、随時選考へお進みいただけます。エントリーから内定まで平均3〜4週間程度です。' },
+              { q: '学部・学科による有利不利はありますか？', a: 'ありません。文系・理系を問わず幅広い学部から入社しています。選考で見ているのは学んだ内容よりも、物事への向き合い方です。' },
+              { q: '面接ではどんなことを聞かれますか？', a: '学生時代に力を入れたこと、その中での意思決定や工夫を深掘りします。準備した答えより、その場で考えた言葉を大切にしています。' },
+              { q: 'オンラインでの選考は可能ですか？', a: '可能です。遠方にお住まいの方は全選考プロセスをオンラインで完結できます。最終面接のみ来社を推奨していますが、相談に応じます。' },
+            ],
+          },
+          {
+            category: '働き方について',
+            items: [
+              { q: '配属はどのように決まりますか？', a: '本人の希望・適性・各部門の状況を踏まえて決定します。内定後の面談で希望を丁寧にヒアリングした上で判断します。' },
+              { q: '転勤はありますか？', a: '全国60拠点以上を展開しているため可能性はありますが、本人の希望を考慮します。エリア限定で働きたい旨も相談可能です。' },
+              { q: '残業はどのくらいですか？', a: '部署により差はありますが月平均20〜30時間程度です。PC強制シャットダウンなど労務管理の仕組みを整備しています。' },
+              { q: '若手のうちから裁量はありますか？', a: 'あります。入社1〜2年目でチームリーダーに抜擢される例も珍しくありません。年次より成果と意欲を見る文化です。' },
+            ],
+          },
+          {
+            category: '制度・環境について',
+            items: [
+              { q: '研修制度について教えてください。', a: '入社時の集合研修に加え、配属後のOJT、階層別研修、資格取得支援制度があります。キャリアコンサルタント等の資格取得者も多数在籍。' },
+              { q: '社内公募制度はありますか？', a: 'あります。新規事業や他部門への異動に自ら手を挙げられる制度を運用しています。2030年に向けて新規事業100創出を掲げており、挑戦機会は豊富です。' },
+              { q: '福利厚生について教えてください。', a: '各種社会保険完備、住宅補助、慶弔見舞金、産育休（取得実績多数）、自社運営の保育所利用など。詳細は募集要項をご確認ください。' },
+            ],
+          },
+        ],
+      },
+    },
+  },
+};

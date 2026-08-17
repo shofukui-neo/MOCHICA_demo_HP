@@ -1,54 +1,29 @@
 ---
+/**
+ * 仕事を知る（jobs サイト）。
+ * 文言・画像は一切ここには書かない。すべて src/config/site.config.ts の pages.jobs から供給される。
+ * セクションを config から消せば、そのブロックは出力されない。
+ */
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
-import SectionHeading from '../components/SectionHeading.astro';
 import BusinessSection from '../components/BusinessSection.astro';
 import NumbersSection from '../components/NumbersSection.astro';
-import JobRoleCard from '../components/JobRoleCard.astro';
+import JobRolesSection from '../components/JobRolesSection.astro';
 import ComparisonTable from '../components/ComparisonTable.astro';
 import EntryCTA from '../components/EntryCTA.astro';
-import { IMAGES, JOB_ROLES } from '../data/site';
+import { getPage, siteConfig } from '../config';
+
+const page = getPage('jobs');
+const entry = page.entry ?? siteConfig.entry;
 ---
 
-<Layout
-  title="仕事を知る"
-  description="ネオキャリアの3つの事業領域と、法人営業・キャリアアドバイザー・企画/マーケティング・新規事業/HR Techの4職種を紹介します。"
-  siteId="jobs"
-  ogImage={IMAGES.heroJobs}
->
-  <PageHero
-    eyebrow="JOBS — 仕事を知る"
-    titleLines={['人の可能性を、', '事業で広げる。']}
-    lead="ネオキャリアは人材ビジネスを軸に、採用支援・就労支援・業務支援の3領域を展開しています。まずは「どんな事業で、どんな職種があるか」から。"
-    image={IMAGES.heroJobs}
-    imageAlt="ネオキャリアで働く社員"
-    primary={{ label: '4つの職種を見る', href: '#jobs' }}
-    secondary={{ label: 'エントリーする', href: '#entry' }}
-    stats={[
-      { value: '3領域', label: '事業ドメイン' },
-      { value: '4職種', label: '新卒募集' },
-      { value: '60拠点超', label: '全国ネットワーク' },
-      { value: '200+', label: '取扱求人メディア' },
-    ]}
-  />
+<Layout meta={page.meta} siteId="jobs">
+  <PageHero content={page.hero} />
 
-  <BusinessSection />
-  <NumbersSection />
+  {page.business && <BusinessSection content={page.business} />}
+  {page.numbers && <NumbersSection content={page.numbers} />}
+  {page.jobRoles && <JobRolesSection content={page.jobRoles} />}
+  {page.comparison && <ComparisonTable content={page.comparison} />}
 
-  <section id="jobs" class="bg-white py-20 md:py-28">
-    <div class="shell">
-      <SectionHeading
-        label="03 — Job Roles"
-        title="4つの職種、4つの未来"
-        lead="同じ会社でも、向き合う相手も成果の測り方も違います。それぞれの「1日の流れ」まで書いたので、自分が動いている姿を想像してみてください。"
-      />
-
-      <div class="mt-14 space-y-8">
-        {JOB_ROLES.map((role, i) => <JobRoleCard role={role} flip={i % 2 === 1} />)}
-      </div>
-    </div>
-  </section>
-
-  <ComparisonTable />
-  <EntryCTA />
+  <EntryCTA content={entry} />
 </Layout>

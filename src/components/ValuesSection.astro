@@ -1,11 +1,20 @@
 ---
-import { VALUES, SITE, IMAGES } from '../data/site';
+import type { ValuesContent } from '../config/schema';
+
+interface Props {
+  content: ValuesContent;
+}
+
+const { content } = Astro.props;
 ---
 
-<section id="values" class="relative isolate overflow-hidden bg-brand-blue-deep py-20 md:py-28">
+<section
+  id={content.id}
+  class="relative isolate overflow-hidden bg-brand-blue-deep py-20 md:py-28"
+>
   <img
-    src={IMAGES.statement}
-    alt=""
+    src={content.image.src}
+    alt={content.image.alt}
     class="absolute inset-0 -z-20 h-full w-full object-cover opacity-25"
     loading="lazy"
     decoding="async"
@@ -13,20 +22,17 @@ import { VALUES, SITE, IMAGES } from '../data/site';
   <div class="grid-veil absolute inset-0 -z-10"></div>
 
   <div class="shell">
-    <p class="section-label text-brand-blue-light/70">02 — Purpose</p>
-    <h2 class="mt-4 text-2xl font-black leading-tight text-white md:text-4xl">
-      {SITE.purpose}
-    </h2>
-    <p class="mt-5 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">
-      私たちが描く未来は、誰もが主体的に、いきいきと働ける社会。次世代が前向きに生きられる社会。
-      そのために、一人ひとりに本気で向き合い、人の力をテクノロジーで加速させます。
-    </p>
+    <p class="section-label text-brand-blue-light/70">{content.label}</p>
+    <h2 class="mt-4 text-2xl font-black leading-tight text-white md:text-4xl">{content.title}</h2>
+    <p class="mt-5 max-w-2xl text-sm leading-relaxed text-white/70 md:text-base">{content.lead}</p>
 
     <div class="mt-14">
-      <p class="text-[11px] font-bold tracking-[0.25em] text-white/50">7 VALUES</p>
-      <div class="mt-6 grid gap-px overflow-hidden rounded-2xl bg-white/15 sm:grid-cols-2 lg:grid-cols-3">
+      <p class="text-[11px] font-bold tracking-[0.25em] text-white/50">{content.itemsLabel}</p>
+      <div
+        class="mt-6 grid gap-px overflow-hidden rounded-2xl bg-white/15 sm:grid-cols-2 lg:grid-cols-3"
+      >
         {
-          VALUES.map((v) => (
+          content.items.map((v) => (
             <div class="group bg-brand-blue-deep/80 p-7 backdrop-blur transition hover:bg-brand-blue/30">
               <span class="text-[10px] font-black tracking-[0.2em] text-white/40">{v.no}</span>
               <h3 class="mt-2 text-base font-bold text-white">{v.title}</h3>
@@ -34,11 +40,20 @@ import { VALUES, SITE, IMAGES } from '../data/site';
             </div>
           ))
         }
-        <div class="flex items-center bg-brand-blue/25 p-7 backdrop-blur">
-          <p class="text-sm font-bold leading-relaxed text-white/90">
-            この7つに<br />ピンと来たなら、<br />たぶん合います。
-          </p>
-        </div>
+        {
+          content.closingLines.length > 0 && (
+            <div class="flex items-center bg-brand-blue/25 p-7 backdrop-blur">
+              <p class="text-sm font-bold leading-relaxed text-white/90">
+                {content.closingLines.map((line, i) => (
+                  <>
+                    {i > 0 && <br />}
+                    {line}
+                  </>
+                ))}
+              </p>
+            </div>
+          )
+        }
       </div>
     </div>
   </div>

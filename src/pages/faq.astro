@@ -1,38 +1,27 @@
 ---
+/**
+ * 選考を知る（faq サイト）。
+ * 文言・画像は一切ここには書かない。すべて src/config/site.config.ts の pages.faq から供給される。
+ * セクションを config から消せば、そのブロックは出力されない。
+ */
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import SelectionFlow from '../components/SelectionFlow.astro';
 import RecruitmentTable from '../components/RecruitmentTable.astro';
 import FAQSection from '../components/FAQSection.astro';
 import EntryCTA from '../components/EntryCTA.astro';
-import { IMAGES } from '../data/site';
+import { getPage, siteConfig } from '../config';
+
+const page = getPage('faq');
+const entry = page.entry ?? siteConfig.entry;
 ---
 
-<Layout
-  title="選考を知る"
-  description="ネオキャリア2027年新卒採用の選考フロー・募集要項・よくある質問。エントリーはこのページから。"
-  siteId="faq"
-  ogImage={IMAGES.heroFaq}
->
-  <PageHero
-    eyebrow="ENTRY — 選考を知る"
-    titleLines={['不安を、', '全部つぶしてから。']}
-    lead="選考の流れ、募集要項、そして聞きにくい質問への回答。判断に必要な情報を、この1ページに集めました。"
-    image={IMAGES.heroFaq}
-    imageAlt="ネオキャリアの選考風景"
-    primary={{ label: 'エントリーする', href: '#entry' }}
-    secondary={{ label: '募集要項を見る', href: '#requirements' }}
-    stats={[
-      { value: '通年', label: 'エントリー受付' },
-      { value: '3〜4週間', label: '内定までの平均' },
-      { value: 'オンライン可', label: '全選考プロセス' },
-      { value: '文理不問', label: '応募資格' },
-    ]}
-    accent="var(--color-brand-orange)"
-  />
+<Layout meta={page.meta} siteId="faq">
+  <PageHero content={page.hero} />
 
-  <SelectionFlow />
-  <RecruitmentTable />
-  <FAQSection />
-  <EntryCTA />
+  {page.flow && <SelectionFlow content={page.flow} />}
+  {page.requirements && <RecruitmentTable content={page.requirements} />}
+  {page.faq && <FAQSection content={page.faq} />}
+
+  <EntryCTA content={entry} />
 </Layout>

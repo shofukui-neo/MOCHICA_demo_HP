@@ -2,74 +2,84 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, IMAGES, ORIGINS, type SiteId } from '../data/site';
+import { formatTitle, siteConfig, themeCssVariables } from '../config';
+import type { PageMeta, SiteId } from '../config/schema';
 
 interface Props {
-  title: string;
-  description: string;
+  meta: PageMeta;
   siteId: SiteId;
-  ogImage?: string;
 }
 
-const { title, description, siteId, ogImage = IMAGES.heroJobs } = Astro.props;
+const { meta, siteId } = Astro.props;
+const { brand, theme, meta: metaConfig, origins } = siteConfig;
 
 // 3サイトはそれぞれ別サブドメインのルートに配信される。
 // ビルド時のパス（/people 等）ではなく配信先オリジンから canonical を組み立てる。
-const origin = ORIGINS[siteId];
+const origin = origins[siteId];
 const canonical = `${origin}/`;
-const fullTitle = `${title} | ${SITE.company} ${SITE.year}年新卒採用`;
+const fullTitle = formatTitle(meta.title);
+
+// config の theme.colors を CSS 変数として流し込む。
+// :root:root で詳細度を上げ、global.css の @theme 既定値より確実に優先させる。
+const themeStyle = `:root:root{${themeCssVariables()}}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: brand.company,
+  url: origin,
+  logo: brand.logo.src,
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: brand.address.country,
+    postalCode: brand.address.postalCode,
+    addressRegion: brand.address.region,
+    addressLocality: brand.address.locality,
+    streetAddress: brand.address.street,
+  },
+};
 ---
 
 <!doctype html>
-<html lang="ja">
+<html lang={metaConfig.lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{fullTitle}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={meta.description} />
     <link rel="canonical" href={canonical} />
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={`${SITE.company} 新卒採用`} />
+    <meta property="og:site_name" content={metaConfig.siteName} />
     <meta property="og:title" content={fullTitle} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={meta.description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImage} />
-    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:image" content={meta.ogImage} />
+    <meta property="og:locale" content={`${metaConfig.lang}_${brand.address.country}`} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://www.neo-career.co.jp" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
-      rel="stylesheet"
-    />
 
-    <script
-      type="application/ld+json"
-      set:html={JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        name: SITE.company,
-        url: origin,
-        logo: IMAGES.icon,
-        address: {
-          '@type': 'PostalAddress',
-          addressCountry: 'JP',
-          addressRegion: '東京都',
-          addressLocality: '新宿区',
-          streetAddress: '西新宿1-22-2 新宿サンエービル',
-        },
-      })}
-    />
+    {
+      theme.fontUrl && (
+        <>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+          <link href={theme.fontUrl} rel="stylesheet" />
+        </>
+      )
+    }
+    {theme.preconnect?.map((href) => <link rel="preconnect" href={href} crossorigin />)}
+
+    <style is:inline set:html={themeStyle}></style>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body class="min-h-screen antialiased">
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand-blue focus:px-5 focus:py-2 focus:text-sm focus:text-white"
-      >本文へスキップ</a
+      >{metaConfig.skipLinkLabel}</a
     >
     <Header />
     <main id="main">
