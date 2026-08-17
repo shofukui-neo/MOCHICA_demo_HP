@@ -89,11 +89,31 @@ siteConfig
 
 ### 新しい企業のサイトを作る
 
+方法は2つあります。
+
+**A. 設定ファイルを直接書く**
+
 ```bash
 cp src/config/starter.config.ts src/config/site.config.ts  # ひな形をコピー
 # public/images/ に画像を配置し、site.config.ts の「◯◯」を書き換える
 npm run dev
 ```
+
+**B. Google フォームで文章と画像を集めて自動生成する**
+
+企業にフォームで入力してもらい、その回答から `site.config.ts` を生成します。
+**詳細は [docs/intake-flow.md](docs/intake-flow.md) を参照してください。**
+
+```bash
+npm run intake:form       # フォームを作る Apps Script を生成 → script.google.com で実行
+# 企業に回答してもらい、回答シートを intake/company.csv と intake/content.csv にダウンロード
+npm run intake:build      # CSV → src/config/site.config.ts
+npm run build
+```
+
+フォームは2枚構成です。「会社基本情報」（1社1回）と「コンテンツ登録」（事業・職種・社員・FAQを1件ずつ、
+必要な数だけ繰り返し提出）。通し番号・アクセント色・英字ラベル・ボタンのホバー色などは自動で補われ、
+中身が1件も無いセクションは出力されません。
 
 - **セクションを消す**: config のそのブロックを丸ごと削除すれば出力されません
 - **件数を増減する**: 配列の要素を足し引きするだけ。レイアウトは自動で追従します
