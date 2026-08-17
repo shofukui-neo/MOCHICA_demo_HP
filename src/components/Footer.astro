@@ -1,16 +1,7 @@
 ---
 import { SITE, IMAGES } from '../data/site';
 
-interface Props {
-  activeNav: 'jobs' | 'people' | 'faq';
-}
-const { activeNav } = Astro.props;
-
-const nav = [
-  { id: 'jobs', label: '仕事を知る', href: '/' },
-  { id: 'people', label: '人を知る', href: '/people' },
-  { id: 'faq', label: '選考を知る', href: '/faq' },
-] as const;
+// 3サイトは完全に独立しているため、サイトマップ（他サイトへのリンク）は持たない。
 ---
 
 <footer class="bg-brand-blue-deep py-14 text-white/70">
@@ -28,31 +19,14 @@ const nav = [
         </p>
       </div>
 
-      <nav class="flex flex-col gap-3" aria-label="フッターナビゲーション">
-        <p class="text-[10px] font-black tracking-[0.25em] text-white/40">SITE MAP</p>
-        {
-          nav.map((n) => (
-            <a
-              href={n.href}
-              aria-current={activeNav === n.id ? 'page' : undefined}
-              class:list={[
-                'text-sm transition hover:text-white',
-                activeNav === n.id ? 'font-bold text-white' : '',
-              ]}
-            >
-              {n.label}
-            </a>
-          ))
-        }
-        <a
-          href="https://www.neo-career.co.jp/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-sm transition hover:text-white"
-        >
-          コーポレートサイト ↗
-        </a>
-      </nav>
+      <a
+        href="https://www.neo-career.co.jp/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-sm transition hover:text-white"
+      >
+        コーポレートサイト ↗
+      </a>
     </div>
 
     <div class="mt-12 border-t border-white/15 pt-6">

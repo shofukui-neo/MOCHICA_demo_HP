@@ -5,14 +5,13 @@ import SelectionFlow from '../components/SelectionFlow.astro';
 import RecruitmentTable from '../components/RecruitmentTable.astro';
 import FAQSection from '../components/FAQSection.astro';
 import EntryCTA from '../components/EntryCTA.astro';
-import PageNav from '../components/PageNav.astro';
 import { IMAGES } from '../data/site';
 ---
 
 <Layout
   title="選考を知る"
   description="ネオキャリア2027年新卒採用の選考フロー・募集要項・よくある質問。エントリーはこのページから。"
-  activeNav="faq"
+  siteId="faq"
   ogImage={IMAGES.heroFaq}
 >
   <PageHero
@@ -36,6 +35,4 @@ import { IMAGES } from '../data/site';
   <RecruitmentTable />
   <FAQSection />
   <EntryCTA />
-
-  <PageNav headline="他のページも見ておきますか？" current="faq" />
 </Layout>

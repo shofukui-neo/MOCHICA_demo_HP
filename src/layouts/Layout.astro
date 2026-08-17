@@ -2,19 +2,21 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, IMAGES } from '../data/site';
+import { SITE, IMAGES, ORIGINS, type SiteId } from '../data/site';
 
 interface Props {
   title: string;
   description: string;
-  activeNav: 'jobs' | 'people' | 'faq';
+  siteId: SiteId;
   ogImage?: string;
 }
 
-const { title, description, activeNav, ogImage = IMAGES.heroJobs } = Astro.props;
+const { title, description, siteId, ogImage = IMAGES.heroJobs } = Astro.props;
 
-// 各ページが独立した canonical / OG を持つ（3ページを別URLとして正しく認識させる）
-const canonical = new URL(Astro.url.pathname, SITE.url).href;
+// 3サイトはそれぞれ別サブドメインのルートに配信される。
+// ビルド時のパス（/people 等）ではなく配信先オリジンから canonical を組み立てる。
+const origin = ORIGINS[siteId];
+const canonical = `${origin}/`;
 const fullTitle = `${title} | ${SITE.company} ${SITE.year}年新卒採用`;
 ---
 
@@ -51,7 +53,7 @@ const fullTitle = `${title} | ${SITE.company} ${SITE.year}年新卒採用`;
         '@context': 'https://schema.org',
         '@type': 'Organization',
         name: SITE.company,
-        url: SITE.url,
+        url: origin,
         logo: IMAGES.icon,
         address: {
           '@type': 'PostalAddress',
@@ -69,10 +71,10 @@ const fullTitle = `${title} | ${SITE.company} ${SITE.year}年新卒採用`;
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand-blue focus:px-5 focus:py-2 focus:text-sm focus:text-white"
       >本文へスキップ</a
     >
-    <Header activeNav={activeNav} />
+    <Header />
     <main id="main">
       <slot />
     </main>
-    <Footer activeNav={activeNav} />
+    <Footer />
   </body>
 </html>

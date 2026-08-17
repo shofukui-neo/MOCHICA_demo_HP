@@ -6,14 +6,14 @@ import ValuesSection from '../components/ValuesSection.astro';
 import EmployeeCard from '../components/EmployeeCard.astro';
 import EmployeeMiniCard from '../components/EmployeeMiniCard.astro';
 import CareerPath from '../components/CareerPath.astro';
-import PageNav from '../components/PageNav.astro';
+import EntryCTA from '../components/EntryCTA.astro';
 import { IMAGES, EMPLOYEES, MINI_EMPLOYEES } from '../data/site';
 ---
 
 <Layout
   title="人を知る"
   description="ネオキャリアの7VALUESと、実際に働く社員のインタビュー。入社理由からキャリアパスまで、リアルな声を紹介します。"
-  activeNav="people"
+  siteId="people"
   ogImage={IMAGES.heroPeople}
 >
   <PageHero
@@ -23,7 +23,7 @@ import { IMAGES, EMPLOYEES, MINI_EMPLOYEES } from '../data/site';
     image={IMAGES.heroPeople}
     imageAlt="ネオキャリアの社員たち"
     primary={{ label: '先輩の話を読む', href: '#interview' }}
-    secondary={{ label: '選考を見る', href: '/faq' }}
+    secondary={{ label: 'エントリーする', href: '#entry' }}
     stats={[
       { value: '7', label: 'VALUES' },
       { value: '31.0歳', label: '平均年齢' },
@@ -57,6 +57,5 @@ import { IMAGES, EMPLOYEES, MINI_EMPLOYEES } from '../data/site';
   </section>
 
   <CareerPath />
-
-  <PageNav headline="この人たちと働く未来を、想像できましたか？" current="people" />
+  <EntryCTA />
 </Layout>

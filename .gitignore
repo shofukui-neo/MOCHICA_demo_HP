@@ -1,6 +1,10 @@
 node_modules/
 dist/
+dist-jobs/
+dist-people/
+dist-faq/
 .astro/
+.wrangler/
 .env
 .env.*
 !.env.example

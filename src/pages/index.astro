@@ -6,14 +6,14 @@ import BusinessSection from '../components/BusinessSection.astro';
 import NumbersSection from '../components/NumbersSection.astro';
 import JobRoleCard from '../components/JobRoleCard.astro';
 import ComparisonTable from '../components/ComparisonTable.astro';
-import PageNav from '../components/PageNav.astro';
+import EntryCTA from '../components/EntryCTA.astro';
 import { IMAGES, JOB_ROLES } from '../data/site';
 ---
 
 <Layout
   title="仕事を知る"
   description="ネオキャリアの3つの事業領域と、法人営業・キャリアアドバイザー・企画/マーケティング・新規事業/HR Techの4職種を紹介します。"
-  activeNav="jobs"
+  siteId="jobs"
   ogImage={IMAGES.heroJobs}
 >
   <PageHero
@@ -23,7 +23,7 @@ import { IMAGES, JOB_ROLES } from '../data/site';
     image={IMAGES.heroJobs}
     imageAlt="ネオキャリアで働く社員"
     primary={{ label: '4つの職種を見る', href: '#jobs' }}
-    secondary={{ label: '働く人を見る', href: '/people' }}
+    secondary={{ label: 'エントリーする', href: '#entry' }}
     stats={[
       { value: '3領域', label: '事業ドメイン' },
       { value: '4職種', label: '新卒募集' },
@@ -50,6 +50,5 @@ import { IMAGES, JOB_ROLES } from '../data/site';
   </section>
 
   <ComparisonTable />
-
-  <PageNav headline="気になる職種は見つかりましたか？" current="jobs" />
+  <EntryCTA />
 </Layout>

@@ -50,8 +50,22 @@ export const SITE = {
   company: '株式会社ネオキャリア',
   year: '2027',
   purpose: '人と本気で向き合い、未来を切り拓く。',
-  url: 'https://mochica-demo-hp.pages.dev',
 } as const;
+
+/**
+ * 3サイトは互いに独立したサブドメインで配信する。
+ * 各サイトは自分のオリジンのルート（`/`）に単独で存在し、相互リンクは持たない。
+ *
+ * ドメインを変更する場合はこの3行だけ書き換えれば
+ * canonical / og:url / JSON-LD の全てに反映される。
+ */
+export const ORIGINS = {
+  jobs: 'https://mochica-jobs.pages.dev',
+  people: 'https://mochica-people.pages.dev',
+  faq: 'https://mochica-faq.pages.dev',
+} as const;
+
+export type SiteId = keyof typeof ORIGINS;
 
 /** 会社概要（公開情報ベース） */
 export const FACTS = [

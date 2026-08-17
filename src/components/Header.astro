@@ -1,16 +1,8 @@
 ---
 import { IMAGES } from '../data/site';
 
-interface Props {
-  activeNav: 'jobs' | 'people' | 'faq';
-}
-const { activeNav } = Astro.props;
-
-const navItems = [
-  { id: 'jobs', label: '仕事を知る', sub: 'JOBS', href: '/' },
-  { id: 'people', label: '人を知る', sub: 'PEOPLE', href: '/people' },
-  { id: 'faq', label: '選考を知る', sub: 'ENTRY', href: '/faq' },
-] as const;
+// 3サイトは完全に独立しているため、他サイトへのナビゲーションは持たない。
+// ヘッダーはロゴ（自サイトのルート）と、同一ページ内のエントリーセクションへの導線のみ。
 ---
 
 <header
@@ -38,66 +30,7 @@ const navItems = [
       </span>
     </a>
 
-    <nav class="hidden items-center gap-1 md:flex" aria-label="メインナビゲーション">
-      {
-        navItems.map((item) => (
-          <a
-            href={item.href}
-            aria-current={activeNav === item.id ? 'page' : undefined}
-            class:list={[
-              'nav-link relative rounded-full px-4 py-2 text-sm font-bold transition',
-              activeNav === item.id ? 'is-active' : '',
-            ]}
-          >
-            {item.label}
-            <span class="ml-1.5 text-[9px] font-bold tracking-widest opacity-50">{item.sub}</span>
-          </a>
-        ))
-      }
-    </nav>
-
-    <div class="flex items-center gap-2">
-      <a href="/faq#entry" class="btn-primary hidden px-6 py-2.5 text-xs md:inline-flex">
-        エントリー
-      </a>
-      <button
-        id="menu-toggle"
-        type="button"
-        class="nav-link rounded-lg p-2 md:hidden"
-        aria-label="メニューを開く"
-        aria-expanded="false"
-        aria-controls="mobile-nav"
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M3 6h18M3 12h18M3 18h18"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <div id="mobile-nav" class="hidden border-t border-gray-200 bg-white md:hidden">
-    <nav class="shell flex flex-col py-2" aria-label="モバイルナビゲーション">
-      {
-        navItems.map((item) => (
-          <a
-            href={item.href}
-            aria-current={activeNav === item.id ? 'page' : undefined}
-            class:list={[
-              'flex items-center justify-between border-b border-gray-100 py-3.5 text-sm font-bold',
-              activeNav === item.id ? 'text-brand-blue' : 'text-gray-700',
-            ]}
-          >
-            <span>{item.label}</span>
-            <span class="text-[10px] tracking-widest text-gray-400">{item.sub}</span>
-          </a>
-        ))
-      }
-      <a href="/faq#entry" class="btn-primary my-3">エントリーする</a>
-    </nav>
+    <a href="#entry" class="btn-primary px-6 py-2.5 text-xs">エントリー</a>
   </div>
 </header>
 
@@ -107,12 +40,8 @@ const navItems = [
     background: transparent;
   }
   #site-header[data-state='top'] :global(#brand-word),
-  #site-header[data-state='top'] :global(#brand-sub),
-  #site-header[data-state='top'] :global(.nav-link) {
+  #site-header[data-state='top'] :global(#brand-sub) {
     color: #ffffff;
-  }
-  #site-header[data-state='top'] :global(.nav-link.is-active) {
-    background: rgba(255, 255, 255, 0.18);
   }
 
   /* スクロール後：白背景に反転 */
@@ -127,37 +56,16 @@ const navItems = [
   #site-header[data-state='scrolled'] :global(#brand-sub) {
     color: var(--color-brand-blue);
   }
-  #site-header[data-state='scrolled'] :global(.nav-link) {
-    color: #4b5563;
-  }
-  #site-header[data-state='scrolled'] :global(.nav-link:hover) {
-    color: var(--color-brand-blue);
-  }
-  #site-header[data-state='scrolled'] :global(.nav-link.is-active) {
-    color: var(--color-brand-blue);
-    background: var(--color-brand-blue-light);
-  }
 </style>
 
 <script>
   const header = document.getElementById('site-header');
-  const toggle = document.getElementById('menu-toggle');
-  const drawer = document.getElementById('mobile-nav');
 
   const sync = () => {
     if (!header) return;
-    const open = drawer && !drawer.classList.contains('hidden');
-    header.dataset.state = window.scrollY > 24 || open ? 'scrolled' : 'top';
+    header.dataset.state = window.scrollY > 24 ? 'scrolled' : 'top';
   };
 
   window.addEventListener('scroll', sync, { passive: true });
   sync();
-
-  toggle?.addEventListener('click', () => {
-    if (!drawer) return;
-    const willOpen = drawer.classList.contains('hidden');
-    drawer.classList.toggle('hidden', !willOpen);
-    toggle.setAttribute('aria-expanded', String(willOpen));
-    sync();
-  });
 </script>

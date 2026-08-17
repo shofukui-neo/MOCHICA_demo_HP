@@ -7,9 +7,12 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/split-sites.mjs",
     "preview": "astro preview",
-    "deploy": "astro build && wrangler deploy",
+    "deploy:jobs": "wrangler pages deploy dist-jobs --project-name=mochica-jobs",
+    "deploy:people": "wrangler pages deploy dist-people --project-name=mochica-people",
+    "deploy:faq": "wrangler pages deploy dist-faq --project-name=mochica-faq",
+    "deploy": "npm run build && npm run deploy:jobs && npm run deploy:people && npm run deploy:faq",
     "astro": "astro"
   },
   "dependencies": {
