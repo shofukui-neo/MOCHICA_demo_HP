@@ -6,16 +6,18 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build && node scripts/split-sites.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "build:all": "node scripts/build.mjs --all",
     "preview": "astro preview",
+    "check": "astro check",
+    "companies": "node scripts/list-companies.mjs",
     "intake:form": "node scripts/make-form-script.mjs",
+    "intake:html": "node scripts/make-html-form.mjs",
     "intake:template": "node scripts/make-intake-template.mjs",
     "intake:build": "node scripts/generate-config.mjs",
-    "deploy:jobs": "wrangler pages deploy dist-jobs --project-name=mochica-jobs",
-    "deploy:people": "wrangler pages deploy dist-people --project-name=mochica-people",
-    "deploy:faq": "wrangler pages deploy dist-faq --project-name=mochica-faq",
-    "deploy": "npm run build && npm run deploy:jobs && npm run deploy:people && npm run deploy:faq",
+    "provision": "node scripts/provision.mjs",
+    "deploy": "node scripts/deploy.mjs",
     "astro": "astro"
   },
   "dependencies": {
@@ -24,6 +26,9 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^26.2.0",
+    "typescript": "^6.0.3",
     "wrangler": "^4.120.0"
   }
 }

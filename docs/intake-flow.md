@@ -1,7 +1,25 @@
-# Google フォームでコンテンツを集めてサイトを生成する
+# フォームでコンテンツを集めてサイトを生成する
 
-企業に Google フォームで文章と画像を入力してもらい、その回答から
-`src/config/site.config.ts` を自動生成して3サイトをビルドする運用です。
+企業に文章と画像を入力してもらい、その回答から
+`src/config/companies/<slug>.config.ts` を自動生成して3サイトをビルドする運用です。
+
+企業を追加するたびにこの流れを1周させます。設定ファイルの生成・登録簿への追加・
+画像フォルダの作成まで `npm run intake:build` が面倒を見るので、
+**コードを手で書く作業は発生しません**。
+
+入力手段は2つあり、**どちらを使っても生成される設定ファイルは同一**です
+（質問文が `scripts/intake/fields.mjs` の同じ定義から作られているため）。
+
+| | [A. Google フォーム](#a-google-フォーム) | [B. 単体HTMLフォーム](#b-単体htmlフォーム) |
+|---|---|---|
+| 回答者のGoogleアカウント | 不要（作成者のみ必要） | 完全に不要 |
+| 回答の集約 | スプレッドシートに自動で集まる | 回答者がCSVを返送する |
+| 画像のアップロード | 質問を差し替えれば可能（要ログイン） | 不可（URLまたはファイル名を入力） |
+| 入力途中の保存 | Googleが保持 | ブラウザに自動保存 |
+| 準備の手間 | Apps Scriptを1回実行 | ファイルを開くだけ |
+
+社外に広く配って回答を1か所に集めたいなら A、
+少数の相手に手早く渡したい・Googleを使いたくないなら B が向いています。
 
 ```
 Google フォーム 2枚            回答スプレッドシート        このリポジトリ
@@ -12,22 +30,25 @@ Google フォーム 2枚            回答スプレッドシート        この
 │ B コンテンツ登録 │ ──────▶ │ フォームの回答 2 │ ──CSV─▶│ intake/content.csv   │
 │   （何件でも）   │         │                  │        └──────────┬───────────┘
 └──────────────────┘         └─────────────────┘                   │
-                                                    npm run intake:build
+                                        npm run intake:build -- --company acme
                                                                    ▼
-                                                    src/config/site.config.ts
+                                              src/config/companies/acme.config.ts
+                                              （+ index.ts へ自動登録）
                                                                    │
-                                                          npm run build
+                                              npm run build -- --company acme
                                                                    ▼
-                                                  dist-jobs / dist-people / dist-faq
+                            dist-acme-jobs / dist-acme-people / dist-acme-faq
 ```
 
 質問文は `scripts/intake/fields.mjs` に定義されており、
-フォーム・CSVひな形・変換スクリプトの3つがすべてそこから作られます。
+Google フォーム・HTMLフォーム・CSVひな形・変換スクリプトのすべてがそこから作られます。
 **質問文が回答シートの列見出しになる**ため、定義とフォームは常に一致します。
 
-## 手順
+---
 
-### 1. フォームを作る（初回のみ）
+## A. Google フォーム
+
+### A-1. フォームを作る（初回のみ）
 
 ```bash
 npm run intake:form      # intake/create-forms.gs を生成
@@ -45,7 +66,12 @@ npm run intake:form      # intake/create-forms.gs を生成
 > 列見出しが変わり `npm run intake:build` が読めなくなります。
 > 文言を変えたい場合は `scripts/intake/fields.mjs` の `q` を直して `npm run intake:form` からやり直してください。
 
-### 2. 企業に入力してもらう
+> **Google Workspace のアカウントで作る場合**、フォームが既定で「組織内のユーザーのみ回答可」に
+> なることがあります。スクリプトは `setRequireLogin(false)` を試みますが、
+> 反映されない場合はフォームの「設定 → 回答」で組織限定のチェックを外してください。
+> 社外の企業に配る前に、ログアウトしたブラウザで回答用URLが開けるか確認することを勧めます。
+
+### A-2. 企業に入力してもらう
 
 | フォーム | 提出回数 | 内容 |
 |----------|----------|------|
@@ -54,12 +80,13 @@ npm run intake:form      # intake/create-forms.gs を生成
 
 フォームBは「登録する内容」で入力欄が切り替わります。
 事業3件・職種4件・社員2名なら計9回送信してもらう形です。
+送信後に「別の回答を送信」リンクが出るので、続けて次の1件を登録できます。
 「表示順」に数字を入れると並び順を指定できます（空欄なら送信順）。
 
 各項目の内容と補足文の一覧は [`intake/fields.md`](../intake/fields.md) にあります。
 記入済みの例は [`intake/sample/`](../intake/sample/) に置いてあります。
 
-### 3. 回答をCSVで取り出す
+### A-3. 回答をCSVで取り出す
 
 回答スプレッドシートで、タブごとに
 **ファイル → ダウンロード → カンマ区切り形式（.csv）** を実行し、次の名前で保存します。
@@ -71,24 +98,80 @@ npm run intake:form      # intake/create-forms.gs を生成
 
 タイムスタンプやメールアドレスなど余分な列が含まれていても無視されます。
 
-### 4. 画像を配置する
+---
+
+## B. 単体HTMLフォーム
+
+Google アカウントを使わずに入力してもらう方法です。
+
+```bash
+npm run intake:html      # intake/form.html を生成
+```
+
+`intake/form.html` はブラウザで開くだけで動く1枚のHTMLです
+（外部への通信は一切ありません）。相手に渡す方法は3つあります。
+
+- ファイルをそのまま送る（メール添付・チャット）
+- 社内の適当な場所にホスティングしてURLを渡す
+- リポジトリを渡して `npm run intake:html` を実行してもらう
+
+### 使い方（回答者側）
+
+1. `intake/form.html` をブラウザで開く
+2. 左側のセクション一覧から順に入力する。入力内容はブラウザに自動保存されるので、閉じて再開できる
+3. 「事業」「職種」「社員インタビュー」「社員（小カード）」「よくある質問」は
+   各セクションの**追加ボタンで必要な件数だけ**増やす。↑↓で並び替え、×で削除
+4. 画面下部に未入力の必須項目数が常に出るので、0になったら
+   **company.csv** と **content.csv** をダウンロードして返送してもらう
+
+「CSVを読み込む」から既存のCSVを読み戻せるので、
+一度回収したあとに修正してもらう往復もできます。
+
+### 使い方（受け取り側）
+
+返送された2つのCSVを `intake/company.csv` と `intake/content.csv` として置けば、
+Google フォーム経由と全く同じように `npm run intake:build` に通せます。
+
+> HTMLフォームは**画像のアップロードに対応していません**。
+> 画像は公開URLかファイル名を入力してもらい、実ファイルは別途受け取ってください。
+
+---
+
+## 共通の手順
+
+### 画像を配置する
 
 画像の質問は既定では**記述式**（公開URL または ファイル名）です。
 
 - **公開URLを入力してもらった場合** — そのままサイトから参照されます。設置作業は不要です
-- **ファイル名を入力してもらった場合** — 別途受け取った画像を `public/images/` に同じ名前で置きます
+- **ファイル名を入力してもらった場合** — 別途受け取った画像を `public/companies/<slug>/` に同じ名前で置きます
 - **フォームを「ファイルのアップロード」に変えた場合** — 回答には Google ドライブのURLが入ります。
-  `npm run intake:build` が `intake/image-manifest.md` に
-  「どのファイルを `public/images/` の何という名前で保存するか」の一覧を書き出すので、それに従って配置します
+  `npm run intake:build` が `intake/<slug>-image-manifest.md` に
+  「どのファイルを `public/companies/<slug>/` の何という名前で保存するか」の一覧を書き出すので、それに従って配置します
 
 推奨サイズは [`docs/images.md`](images.md) を参照してください。
 
-### 5. 設定を生成してビルドする
+### 設定を生成してビルドする
+
+`--company` に企業の slug を渡します。英小文字・数字・ハイフンのみ（例: `acme-foods`）。
+設定ファイル名・画像フォルダ名・出力ディレクトリ名にそのまま使われます。
 
 ```bash
-npm run intake:build     # intake/*.csv → src/config/site.config.ts
-npm run dev              # 確認
-npm run build            # dist-jobs / dist-people / dist-faq を出力
+npm run intake:build -- --company acme   # intake/*.csv → src/config/companies/acme.config.ts
+npm run check                            # 型チェック（必須項目の書き漏れを検出）
+npm run dev   -- --company acme          # 確認
+npm run build -- --company acme          # dist-acme-jobs / -people / -faq を出力
+```
+
+`intake:build` は設定ファイルを書き出したあと、次の2つも自動で行います。
+
+- `src/config/companies/index.ts` への登録（これが無いとビルドできない）
+- `public/companies/<slug>/` の作成（画像の置き場所）
+
+複数社ぶんの回答を扱う場合は `--dir` で入力先を分けると混ざりません。
+
+```bash
+npm run intake:build -- --company acme --dir intake/acme
 ```
 
 `intake:build` は次を自動で補います（フォームで聞かない項目）。
@@ -102,7 +185,7 @@ npm run build            # dist-jobs / dist-people / dist-faq を出力
 **中身が1件も無いセクションは出力されません。** 事業を1件も登録しなければ事業セクションごと消え、
 比較表の行を書かなければ比較表が消えます。
 
-生成された `site.config.ts` は普通のTypeScriptファイルなので、
+生成された `<slug>.config.ts` は普通のTypeScriptファイルなので、
 そのまま手で微調整してかまいません（次回の `intake:build` で上書きされる点にだけ注意）。
 
 ## エラーと警告

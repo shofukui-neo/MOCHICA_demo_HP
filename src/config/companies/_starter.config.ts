@@ -2,36 +2,40 @@
  * ★ 新しい企業のサイトを作るときのひな形。
  *
  * 使い方
- *   1. このファイルを site.config.ts に上書きコピーする
- *        cp src/config/starter.config.ts src/config/site.config.ts
- *   2. 「◯◯」「例:」の部分を自社の文言に置き換える
- *   3. 画像を public/images/ に置き、images のパスを合わせる
- *   4. npm run dev で確認 → npm run build
+ *   1. このファイルを <slug>.config.ts としてコピーする
+ *        cp src/config/companies/_starter.config.ts src/config/companies/acme.config.ts
+ *   2. src/config/companies/index.ts に import と1行を追加して登録する
+ *   3. 「◯◯」「例:」の部分を自社の文言に置き換える
+ *   4. 画像を public/companies/<slug>/ に置き、images のパスを合わせる
+ *   5. npm run dev -- --company acme で確認 → npm run build -- --company acme
  *
- * このファイル自体はどこからも import されないので、
+ * ファイル名が `_` で始まるあいだは登録簿から参照されないので、
  * 書きかけのまま置いておいてもビルドには影響しない。
  *
  * 各項目の意味は src/config/schema.ts のコメントを参照。
  * 不要なセクションは、そのブロックごと削除すればページに出力されない。
  */
-import type { SiteConfig } from './schema';
+import type { SiteConfig } from '../schema';
 
-/** 画像はここに集約する。public/images/ に置いたファイルを絶対パスで指定する。 */
+/**
+ * 画像はここに集約する。public/companies/<slug>/ に置いたファイルを絶対パスで指定する。
+ * 企業ごとにフォルダを分けることで、他社の画像とファイル名が衝突しない。
+ */
 const images = {
-  heroJobs: '/images/hero-jobs.jpg',
-  heroPeople: '/images/hero-people.jpg',
-  heroFaq: '/images/hero-faq.jpg',
-  statement: '/images/statement.jpg',
-  career: '/images/career.jpg',
-  office: '/images/office.jpg',
-  team: '/images/team.jpg',
-  meeting: '/images/meeting.jpg',
-  field: '/images/field.jpg',
-  future: '/images/future.jpg',
-  business1: '/images/business-1.jpg',
-  business2: '/images/business-2.jpg',
-  business3: '/images/business-3.jpg',
-  logo: '/images/logo.png',
+  heroJobs: '/companies/starter/hero-jobs.jpg',
+  heroPeople: '/companies/starter/hero-people.jpg',
+  heroFaq: '/companies/starter/hero-faq.jpg',
+  statement: '/companies/starter/statement.jpg',
+  career: '/companies/starter/career.jpg',
+  office: '/companies/starter/office.jpg',
+  team: '/companies/starter/team.jpg',
+  meeting: '/companies/starter/meeting.jpg',
+  field: '/companies/starter/field.jpg',
+  future: '/companies/starter/future.jpg',
+  business1: '/companies/starter/business-1.jpg',
+  business2: '/companies/starter/business-2.jpg',
+  business3: '/companies/starter/business-3.jpg',
+  logo: '/companies/starter/logo.png',
 };
 
 export const siteConfig: SiteConfig = {

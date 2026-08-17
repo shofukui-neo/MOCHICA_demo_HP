@@ -1,33 +1,57 @@
 /**
- * 収集した回答（CSV） → src/config/site.config.ts を生成する。
+ * 収集した回答（CSV） → src/config/companies/<slug>.config.ts を生成する。
  *
- *   npm run intake:build
- *   npm run intake:build -- --out src/config/site.config.preview.ts   # 別名で出力
- *   npm run intake:build -- --dir path/to/csv                          # 入力先を変える
+ *   npm run intake:build -- --company acme
+ *   npm run intake:build -- --company acme --dir intake/acme     # 入力先を変える
+ *   npm run intake:build -- --company acme --out path/to/out.ts  # 出力先を変える
  *
  * 入力
- *   intake/company.csv   フォームA「会社基本情報」の回答（1行だけ使う）
- *   intake/content.csv   フォームB「コンテンツ登録」の回答（何行でも可）
+ *   <dir>/company.csv   フォームA「会社基本情報」の回答（1行だけ使う）
+ *   <dir>/content.csv   フォームB「コンテンツ登録」の回答（何行でも可）
  *
  * Google フォームの回答シートから「ファイル > ダウンロード > カンマ区切り形式」で
  * 書き出したものをそのまま置けばよい（タイムスタンプ等の余分な列は無視される）。
+ *
+ * 生成に成功すると src/config/companies/index.ts への登録も自動で行う。
+ * 登録まで済めば `npm run dev -- --company <slug>` がそのまま動く。
  */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { buildConfig, renderConfigSource } from './intake/build.mjs';
 import { parseCsv, toRecords } from './intake/util.mjs';
+import {
+  SLUG_PATTERN,
+  argOf,
+  companiesDir,
+  imageDir,
+  listCompanies,
+  registerCompany,
+  root,
+} from './companies.mjs';
 
-const root = fileURLToPath(new URL('..', import.meta.url));
+/* ---- 企業 slug ---- */
+const slug = argOf('company');
 
-const argOf = (name, fallback) => {
-  const i = process.argv.indexOf(`--${name}`);
-  return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
-};
+if (!slug) {
+  const known = await listCompanies();
+  console.error('[intake] 企業を指定してください。');
+  console.error('         例: npm run intake:build -- --company acme');
+  console.error('');
+  console.error('         slug は出力ファイル名（src/config/companies/<slug>.config.ts）と');
+  console.error('         画像の置き場所（public/companies/<slug>/）に使われます。');
+  if (known.length) console.error(`         既存: ${known.join(' / ')}`);
+  process.exit(1);
+}
+
+if (!SLUG_PATTERN.test(slug)) {
+  console.error(`[intake] slug に使えない文字が含まれています: "${slug}"`);
+  console.error('         英小文字・数字・ハイフンのみで指定してください（例: acme-foods）。');
+  process.exit(1);
+}
 
 const inputDir = path.resolve(root, argOf('dir', 'intake'));
-const outFile = path.resolve(root, argOf('out', 'src/config/site.config.ts'));
-const manifestFile = path.join(inputDir, 'image-manifest.md');
+const outFile = path.resolve(root, argOf('out', path.join(companiesDir, `${slug}.config.ts`)));
+const manifestFile = path.join(inputDir, `${slug}-image-manifest.md`);
 
 const readCsv = async (name) => {
   const file = path.join(inputDir, name);
@@ -59,6 +83,7 @@ if (company.records.length > 1) {
 const { config, images, issues } = buildConfig({
   companyRecord: company.records[company.records.length - 1],
   contentRecords: content.records,
+  slug,
 });
 
 /* ---- 見つからなかった列 ---- */
@@ -84,16 +109,31 @@ if (issues.errors.length > 0) {
 
 /* ---- 出力 ---- */
 await mkdir(path.dirname(outFile), { recursive: true });
-await writeFile(outFile, renderConfigSource(config, images), 'utf8');
+await writeFile(outFile, renderConfigSource(config, images, slug), 'utf8');
 console.log(`\n[intake] ${path.relative(root, outFile)} を生成しました。`);
+
+/* ---- 画像の置き場所を用意する ---- */
+await mkdir(path.join(root, 'public', imageDir(slug)), { recursive: true });
+
+/* ---- 登録簿に追加する ---- */
+if (path.resolve(outFile) === path.resolve(companiesDir, `${slug}.config.ts`)) {
+  const result = await registerCompany(slug);
+  console.log(
+    result === 'added'
+      ? `[intake] src/config/companies/index.ts に "${slug}" を登録しました。`
+      : `[intake] "${slug}" は登録済みです。`,
+  );
+} else {
+  console.log('[intake] 出力先を変更したため、登録簿への追加は行いませんでした。');
+}
 
 /* ---- 画像の保存先一覧（Drive アップロードを使った場合）---- */
 if (issues.downloads.length > 0) {
   const lines = [
-    '# 画像の保存先',
+    `# 画像の保存先（${slug}）`,
     '',
     'フォームでアップロードされた画像は Google ドライブに保存されています。',
-    '下記のとおりダウンロードして `public/images/` に置いてください。',
+    `下記のとおりダウンロードして \`public/${imageDir(slug)}/\` に置いてください。`,
     '',
     '| 用途 | ドライブ上のURL | 保存先 |',
     '|------|------------------|--------|',
@@ -122,4 +162,4 @@ console.log(
   `  FAQ: ${config.pages.faq.faq?.groups.reduce((n, g) => n + g.items.length, 0) ?? 0}問` +
     ` / ${config.pages.faq.faq?.groups.length ?? 0}カテゴリ`,
 );
-console.log('\n  npm run dev で確認してください。');
+console.log(`\n  npm run dev -- --company ${slug} で確認してください。`);

@@ -1,44 +1,69 @@
 # コンテンツ差し替えガイド
 
-このテンプレートは **文言と画像を1つのファイルに集約**している。
-`src/config/site.config.ts` を書き換えるだけで、3サイトすべての中身が入れ替わる。
+このテンプレートは **1企業ぶんの文言と画像を1つのファイルに集約**している。
+`src/config/companies/<slug>.config.ts` を書き換えるだけで、その企業の3サイトの中身が入れ替わる。
 
 ページ（`src/pages/`）とコンポーネント（`src/components/`）には
 文言も画像URLも一切書かれていない。レイアウトやCSSに触れる必要はない。
+
+複数企業のサイトを1つのリポジトリで持ち、ビルド時に企業を1社選ぶ方式にしている。
+テンプレート側（コンポーネント・スキーマ）を直せば全企業に一度で反映される。
 
 ## ファイルの役割
 
 | ファイル | 役割 | 企業ごとに編集するか |
 |----------|------|----------------------|
-| `src/config/site.config.ts` | **文言・画像・配色・配信URLのすべて** | ✅ ここだけ編集する |
-| `src/config/starter.config.ts` | 白紙のひな形（コピー元） | コピーして使う |
+| `src/config/companies/<slug>.config.ts` | **文言・画像・配色・配信URLのすべて** | ✅ ここだけ編集する |
+| `src/config/companies/index.ts` | 企業の登録簿 | ✅ 企業追加時に1行足す |
+| `src/config/companies/_starter.config.ts` | 白紙のひな形（コピー元） | コピーして使う |
 | `src/config/schema.ts` | 型定義。各項目の意味がコメントで書かれている | ❌ 不要 |
-| `src/config/index.ts` | 読み込み口・アクセント色の対応表 | ❌ 不要 |
+| `src/config/index.ts` | 企業の選択・アクセント色の対応表 | ❌ 不要 |
 | `src/pages/*.astro` | セクションを並べるだけ | ❌ 不要 |
 | `src/components/*.astro` | 見た目のみ。props で内容を受け取る | ❌ 不要 |
-| `public/images/` | 画像の置き場所 | ✅ 画像を置く |
+| `public/companies/<slug>/` | 画像の置き場所 | ✅ 画像を置く |
 
 推奨サイズなど画像の詳細は [`docs/images.md`](images.md) を参照。
 
 ## 新しい企業のサイトを作る手順
 
+slug は企業の識別子。英小文字・数字・ハイフンのみで付ける（例: `acme-foods`）。
+設定ファイル名・画像フォルダ名・出力ディレクトリ名にそのまま使われる。
+
 ```bash
 # 1. ひな形をコピー
-cp src/config/starter.config.ts src/config/site.config.ts
+cp src/config/companies/_starter.config.ts src/config/companies/acme.config.ts
 
-# 2. 画像を配置（推奨サイズは public/images/README.md 参照）
-#    public/images/hero-jobs.jpg などを置く
+# 2. 登録簿に追加
+#    src/config/companies/index.ts に次の2行を足す
+#      import { siteConfig as acme } from './acme.config';
+#      'acme': acme,
 
-# 3. site.config.ts の「◯◯」を自社の文言に置き換える
+# 3. 画像を配置
+#    public/companies/acme/hero-jobs.jpg などを置く
 
-# 4. 確認
-npm run dev
+# 4. acme.config.ts の「◯◯」を自社の文言に置き換える
+#    images のパスを /companies/acme/... に合わせる
 
-# 5. ビルド
-npm run build
+# 5. 確認
+npm run dev -- --company acme
+
+# 6. 型チェックとビルド
+npm run check
+npm run build -- --company acme
 ```
 
-## site.config.ts の構成
+フォームで文章と画像を集めて自動生成する場合は [`docs/intake-flow.md`](intake-flow.md) を参照。
+そちらは手順1〜3を1コマンドで済ませられる。
+
+## 登録済みの企業を確認する
+
+```bash
+npm run companies
+```
+
+各企業の配信先（オリジンと Cloudflare Pages のプロジェクト名）が一覧で出る。
+
+## <slug>.config.ts の構成
 
 ```
 siteConfig

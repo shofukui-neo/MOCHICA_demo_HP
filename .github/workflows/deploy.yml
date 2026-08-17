@@ -1,0 +1,51 @@
+name: Deploy
+
+# Cloudflare Pages へ配信する。手動実行のみ。
+#
+# 事前に Secrets へ次の2つを登録しておくこと。
+#   CLOUDFLARE_API_TOKEN   Pages への編集権限を持つトークン
+#   CLOUDFLARE_ACCOUNT_ID  アカウントID
+#
+# Pages プロジェクトが未作成の場合は provision を true にする。
+# push での自動配信にしたい場合は on: に push を足す（全企業が毎回再配信される点に注意）。
+
+on:
+  workflow_dispatch:
+    inputs:
+      company:
+        description: '企業 slug（すべて配信する場合は all）'
+        required: true
+        default: all
+      provision:
+        description: 'Pages プロジェクトが未作成なら true'
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # --company acme / --all のどちらかに解決する
+      TARGET: ${{ inputs.company == 'all' && '--all' || format('--company {0}', inputs.company) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      - name: ビルド
+        run: npm run build -- $TARGET
+
+      - name: Pages プロジェクトを作成
+        if: ${{ inputs.provision }}
+        run: npm run provision -- $TARGET
+
+      # ビルド済みの出力をそのまま配信する（直前のビルドを使い回す）
+      - name: 配信
+        run: npm run deploy -- $TARGET --skip-build

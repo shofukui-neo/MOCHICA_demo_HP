@@ -1,17 +1,18 @@
 /**
- * ★ このファイルだけを書き換えれば、3サイトの文言・画像・配色がすべて入れ替わる。
+ * ★ 1企業ぶんの設定。このファイルだけで3サイトの文言・画像・配色が決まる。
  *
  * ページ（src/pages/）とコンポーネント（src/components/）には
  * 文言も画像URLも一切書かれていないので、レイアウトやCSSに触れる必要はない。
  *
  * ・型定義と各項目の意味は src/config/schema.ts を参照
  * ・書き換え手順は docs/content-guide.md を参照
- * ・白紙のひな形は src/config/starter.config.ts をコピーして使う
+ * ・白紙のひな形は同じフォルダの _starter.config.ts をコピーして使う
+ * ・企業の追加は src/config/companies/index.ts への登録が必要
  *
  * 省略可能な項目（?付き）を消すと、そのブロックごと出力されなくなる。
  * 例: pages.jobs.comparison を丸ごと消せば職種比較表のセクションが消える。
  */
-import type { SiteConfig } from './schema';
+import type { SiteConfig } from '../schema';
 
 /**
  * 画像はここに集約してから各セクションで参照する（同じ画像を使い回すため）。

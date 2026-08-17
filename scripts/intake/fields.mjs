@@ -2,9 +2,9 @@
  * 収集フォームの項目定義（唯一の真実）。
  *
  * このファイルから次の3つが生成・駆動される。
- *   - Google フォームを自動作成する Apps Script   … scripts/make-form-script.mjs
- *   - 手入力用のCSVテンプレート                    … scripts/make-intake-template.mjs
- *   - 回答CSV → src/config/site.config.ts の変換   … scripts/generate-config.mjs
+ *   - Google フォームを自動作成する Apps Script                  … scripts/make-form-script.mjs
+ *   - 手入力用のCSVテンプレート                                   … scripts/make-intake-template.mjs
+ *   - 回答CSV → src/config/companies/<slug>.config.ts の変換      … scripts/generate-config.mjs
  *
  * ★ 質問文（q）がそのまま回答シートの列見出しになる。
  *   フォーム作成後に質問文を編集した場合は、このファイルの q も必ず合わせること。
@@ -20,7 +20,8 @@
 
 /** 画像項目の共通ヘルプ */
 const IMAGE_HELP =
-  '画像の公開URL、または public/images/ に置くファイル名（例: hero-jobs.jpg）を入力してください。';
+  '画像の公開URL、またはファイル名（例: hero-jobs.jpg）を入力してください。' +
+  'ファイル名で指定した場合は public/companies/<企業slug>/ に置きます。';
 
 /** lines型のヘルプ文を parts から自動生成する */
 export const linesHelp = (parts, extra = '') => {

@@ -134,10 +134,14 @@ const isDriveUrl = (url) => /drive\.google\.com|googleusercontent\.com/.test(url
 /**
  * 画像の入力値（公開URL / ファイル名 / Drive URL）を配信パスに正規化する。
  * Drive URL の場合は「この名前で保存してください」という一覧に積む。
+ *
+ * 保存先は企業ごとに public/companies/<slug>/ で分ける。
+ * 同じファイル名（hero-jobs.jpg など）を各社が使っても衝突しない。
  */
-function makeImageResolver(issues) {
+function makeImageResolver(issues, slug) {
   /** varName -> 配信パス */
   const images = new Map();
+  const dir = `companies/${slug}`;
 
   const resolveImage = function resolveImage(varName, input, label) {
     const value = String(input ?? '').trim();
@@ -145,17 +149,17 @@ function makeImageResolver(issues) {
 
     let resolved;
     if (!value) {
-      resolved = `/images/${localName}`;
-      issues.warnings.push(`画像が未入力です（${label}）。${resolved} を置いてください。`);
+      resolved = `/${dir}/${localName}`;
+      issues.warnings.push(`画像が未入力です（${label}）。public/${dir}/${localName} を置いてください。`);
     } else if (isDriveUrl(value)) {
-      resolved = `/images/${localName}`;
-      issues.downloads.push({ label, from: value, to: `public/images/${localName}` });
+      resolved = `/${dir}/${localName}`;
+      issues.downloads.push({ label, from: value, to: `public/${dir}/${localName}` });
     } else if (/^https?:\/\//.test(value)) {
       resolved = value;
     } else if (value.startsWith('/')) {
       resolved = value;
     } else {
-      resolved = `/images/${value}`;
+      resolved = `/${dir}/${value}`;
     }
 
     images.set(varName, resolved);
@@ -170,7 +174,7 @@ function makeImageResolver(issues) {
  * 組み立て
  * ---------------------------------------------------------- */
 
-export function buildConfig({ companyRecord, contentRecords }) {
+export function buildConfig({ companyRecord, contentRecords, slug }) {
   const issues = { errors: [], warnings: [], downloads: [], missingColumns: new Set() };
 
   // ---- 会社基本情報を素の入れ物に展開する ----
@@ -206,7 +210,7 @@ export function buildConfig({ companyRecord, contentRecords }) {
     byType[key] = byType[key].map((entry) => entry.item);
   }
 
-  const resolveImage = makeImageResolver(issues);
+  const resolveImage = makeImageResolver(issues, slug);
 
   // ---- テーマ（メインカラーからホバー色・淡色を導出する）----
   const primary = isHexColor(c.theme?.colors?.primary)
@@ -587,22 +591,22 @@ export function buildConfig({ companyRecord, contentRecords }) {
   return { config, images: resolveImage.images, issues };
 }
 
-/** 組み立てた設定を site.config.ts のソースコードにする */
-export function renderConfigSource(config, images) {
+/** 組み立てた設定を <slug>.config.ts のソースコードにする */
+export function renderConfigSource(config, images, slug) {
   const imageEntries = [...images.entries()]
     .map(([key, value]) => `  ${key}: '${value.replaceAll("'", "\\'")}',`)
     .join('\n');
 
   return `/**
- * ★ このファイルは収集フォームの回答から自動生成されました。
- *    再生成: npm run intake:build
+ * ★ このファイルは収集フォームの回答から自動生成されました（企業: ${slug}）。
+ *    再生成: npm run intake:build -- --company ${slug}
  *
  * 生成後に直接編集してもかまいません（次回の再生成で上書きされます）。
  * 型定義と各項目の意味は src/config/schema.ts を参照してください。
  */
-import type { SiteConfig } from './schema';
+import type { SiteConfig } from '../schema';
 
-/** 画像。public/images/ に置いたファイルは '/images/xxx.jpg' で参照する。 */
+/** 画像。public/companies/${slug}/ に置いたファイルを絶対パスで参照する。 */
 const images = {
 ${imageEntries}
 };

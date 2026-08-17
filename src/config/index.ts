@@ -1,12 +1,30 @@
 /**
  * 設定の読み込み口。ページ・コンポーネントはここからだけ import する。
  *
- * 中身を差し替えるときに触るのは `site.config.ts` だけでよい。
+ * どの企業のサイトをビルドするかは、ビルド時に1社だけ選ばれる。
+ *   npm run dev   -- --company acme
+ *   npm run build -- --company acme
+ * 選ばれた企業の設定が siteConfig として全ページに行き渡るので、
+ * 中身を差し替えるときに触るのは src/config/companies/<slug>.config.ts だけでよい。
  */
+import { COMPANIES, DEFAULT_COMPANY, type CompanySlug } from './companies';
 import type { AccentKey, AddressConfig, SiteConfig, SiteId } from './schema';
-import { siteConfig } from './site.config';
 
-export { siteConfig };
+/**
+ * ビルド対象の企業 slug。
+ * astro.config.mjs が COMPANY 環境変数の値を埋め込む（未指定なら既定企業）。
+ */
+export const companySlug = (import.meta.env.COMPANY || DEFAULT_COMPANY) as CompanySlug;
+
+if (!(companySlug in COMPANIES)) {
+  throw new Error(
+    `[config] 未登録の企業です: "${companySlug}"\n` +
+      `  登録済み: ${Object.keys(COMPANIES).join(' / ')}\n` +
+      `  src/config/companies/index.ts に追加してください。`,
+  );
+}
+
+export const siteConfig: SiteConfig = COMPANIES[companySlug];
 export type * from './schema';
 
 /** 指定サイトのページ設定を取り出す。 */

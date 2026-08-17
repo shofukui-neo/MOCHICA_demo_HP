@@ -1,8 +1,7 @@
 node_modules/
 dist/
-dist-jobs/
-dist-people/
-dist-faq/
+dist-*/
+.sites/
 .astro/
 .wrangler/
 .env

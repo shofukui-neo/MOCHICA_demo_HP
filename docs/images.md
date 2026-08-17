@@ -1,18 +1,24 @@
 # 画像の置き方と推奨サイズ
 
-サイトで使う画像は `public/images/` に置く。
-ここに置いたファイルは `/images/ファイル名` という絶対パスで参照できる。
+サイトで使う画像は **企業ごとに** `public/companies/<slug>/` に置く。
+ここに置いたファイルは `/companies/<slug>/ファイル名` という絶対パスで参照できる。
 
 ```ts
-// src/config/site.config.ts
+// src/config/companies/acme.config.ts
 const images = {
-  heroJobs: '/images/hero-jobs.jpg',
-  logo: '/images/logo.png',
+  heroJobs: '/companies/acme/hero-jobs.jpg',
+  logo: '/companies/acme/logo.png',
 };
 ```
 
+企業ごとにフォルダを分けているので、各社が `hero-jobs.jpg` のような
+同じファイル名を使っても衝突しない。
+
+ビルド時は自社のフォルダだけが配信物に含まれる（`dist-<slug>-jobs/companies/<slug>/`）。
+他社の画像が混ざることはない。
+
 外部URL（`https://...`）をそのまま指定することもできるが、
-本番運用では自前配信（このディレクトリ）を推奨する。
+リンク切れと権利関係のリスクがあるため、本番運用では自前配信を推奨する。
 
 ## 必要な画像と推奨サイズ
 
@@ -28,10 +34,10 @@ const images = {
 | エントリー背景 | 1920×1080 以上 | 30%の不透明度で敷かれる |
 | ロゴ／シンボル | 270×270 程度の正方形 | ヘッダー・フッターで 32×32 に縮小表示 |
 
-同じ画像を複数箇所で使い回してもよい（`site.config.ts` の `images` で参照を共有する）。
+同じ画像を複数箇所で使い回してもよい（設定ファイル冒頭の `images` で参照を共有する）。
 
 ## OGP画像
 
 `pages.*.meta.ogImage` はSNSシェア時のサムネイルになる。
-絶対パス（`/images/og-jobs.jpg`）でも動作するが、SNSによっては絶対URLが必要なため、
-`https://example.com/images/og-jobs.jpg` のようにフルURLで指定するのが確実。
+絶対パス（`/companies/acme/og-jobs.jpg`）でも動作するが、SNSによっては絶対URLが必要なため、
+`https://acme-jobs.pages.dev/companies/acme/og-jobs.jpg` のようにフルURLで指定するのが確実。

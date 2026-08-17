@@ -1,0 +1,37 @@
+name: CI
+
+# 登録されている全企業のサイトをまとめて検証する。
+#
+# 企業が増えるほど「テンプレートを直したら別の企業が壊れた」が起きやすくなる。
+# schema.ts やコンポーネントに手を入れた PR で、どの企業の設定が
+# 追従できていないかをここで拾う。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - run: npm ci
+
+      # 型チェック。設定ファイルの必須項目の書き忘れ・項目名の打ち間違いはここで落ちる。
+      - name: 型チェック
+        run: npm run check
+
+      # 全企業ぶんビルド。未登録の企業・壊れた参照はここで落ちる。
+      - name: 全社ビルド
+        run: npm run build:all
+
+      # どの企業がどこへ配信される想定かをログに残す。
+      - name: 配信先の一覧
+        run: npm run companies
